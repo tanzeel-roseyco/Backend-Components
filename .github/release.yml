@@ -1,0 +1,21 @@
+changelog:
+  exclude:
+    labels:
+      - status: blocked
+  categories:
+    - title: Production-ready components
+      labels:
+        - maturity: production-ready
+        - type: component
+    - title: Security
+      labels:
+        - type: security
+    - title: Fixes
+      labels:
+        - type: bug
+    - title: Documentation
+      labels:
+        - type: documentation
+    - title: Other changes
+      labels:
+        - "*"

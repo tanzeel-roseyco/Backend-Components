@@ -1,0 +1,11 @@
+# Project state
+
+The repository is being normalized into a release-quality reusable component
+library. The stable TypeScript surface and Go package contain the components
+classified as `production-ready` in `components.json`. Reference and
+experimental components remain available as source and are excluded from stable
+TypeScript package exports.
+
+Repository-wide Docker verification, GitHub automation, language packaging,
+adversarial review, and release validation are complete for the `v1.0.0`
+release boundary.

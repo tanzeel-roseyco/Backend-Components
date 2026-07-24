@@ -1,0 +1,9 @@
+FROM python:3.12.11-slim
+
+WORKDIR /app
+COPY pyproject.toml README.md requirements-dev.txt ./
+COPY backend_components ./backend_components
+COPY tests ./tests
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+CMD ["sh", "-c", "ruff check . && mypy backend_components tests && pytest"]

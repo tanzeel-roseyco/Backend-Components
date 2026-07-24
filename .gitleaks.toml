@@ -1,0 +1,9 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Synthetic key used to verify secret redaction"
+regexTarget = "match"
+regexes = [
+  '''sk-test_12345678901234567890''',
+]

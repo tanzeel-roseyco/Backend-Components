@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "maturity"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "maturity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["production-ready", "reference", "experimental"],
+      "properties": {
+        "production-ready": { "$ref": "#/$defs/pathList" },
+        "reference": { "$ref": "#/$defs/pathList" },
+        "experimental": { "$ref": "#/$defs/pathList" }
+      }
+    }
+  },
+  "$defs": {
+    "pathList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@
     "outDir": "dist"
   },
   "files": [
+    "index.ts",
     "utilities/spam-submission-guard.ts",
     "utilities/secret-redaction.ts",
     "auth/portable-auth-core.ts",

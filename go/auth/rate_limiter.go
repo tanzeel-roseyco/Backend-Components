@@ -2,195 +2,252 @@ package auth
 
 import (
 	"context"
+	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"net"
+	"net/http"
+	"strings"
+	"sync"
 	"time"
 )
 
-// RateLimitResult represents the result of a rate limit check
+const keyPrefix = "rate_limit:"
+
+// RateLimitState is the durable state stored for one client identifier.
+type RateLimitState struct {
+	Attempts    int
+	RecordedAt  time.Time
+	LockedUntil time.Time
+}
+
+// RateLimitResult is a snapshot of the current decision.
 type RateLimitResult struct {
-	Allowed            bool
-	AttemptsRemaining  int
-	LockoutExpiresAt   *time.Time
+	Allowed           bool
+	AttemptsRemaining int
+	LockoutExpiresAt  *time.Time
 }
 
-// RateLimiterStorage defines the interface for storing rate limit data
+// RateLimiterStorage atomically reads and optionally replaces one record.
+// Implementations must serialize concurrent Update calls for the same key.
 type RateLimiterStorage interface {
-	Get(ctx context.Context, key string) (map[string]interface{}, error)
-	Set(ctx context.Context, key string, value map[string]interface{}) error
-	Delete(ctx context.Context, key string) error
+	Update(ctx context.Context, key string, change func(*RateLimitState) (*RateLimitState, error)) error
 }
 
-// InMemoryStorage is a basic in-memory storage implementation
+// InMemoryStorage is concurrency-safe, process-local storage.
 type InMemoryStorage struct {
-	store map[string]map[string]interface{}
+	mu    sync.Mutex
+	store map[string]RateLimitState
 }
 
-// NewInMemoryStorage creates a new in-memory storage
 func NewInMemoryStorage() *InMemoryStorage {
-	return &InMemoryStorage{
-		store: make(map[string]map[string]interface{}),
-	}
+	return &InMemoryStorage{store: make(map[string]RateLimitState)}
 }
 
-func (s *InMemoryStorage) Get(ctx context.Context, key string) (map[string]interface{}, error) {
-	if val, ok := s.store[key]; ok {
-		return val, nil
-	}
-	return nil, nil
-}
-
-func (s *InMemoryStorage) Set(ctx context.Context, key string, value map[string]interface{}) error {
-	s.store[key] = value
-	return nil
-}
-
-func (s *InMemoryStorage) Delete(ctx context.Context, key string) error {
-	delete(s.store, key)
-	return nil
-}
-
-// RateLimiter implements IP-based rate limiting
-type RateLimiter struct {
-	MaxAttempts    int
-	LockoutMinutes int
-	ResetHours     int
-	storage        RateLimiterStorage
-}
-
-// NewRateLimiter creates a new rate limiter
-func NewRateLimiter(maxAttempts, lockoutMinutes, resetHours int, storage RateLimiterStorage) *RateLimiter {
-	if storage == nil {
-		storage = NewInMemoryStorage()
-	}
-	return &RateLimiter{
-		MaxAttempts:    maxAttempts,
-		LockoutMinutes: lockoutMinutes,
-		ResetHours:     resetHours,
-		storage:        storage,
-	}
-}
-
-// CheckLimit checks if an IP is rate limited
-func (rl *RateLimiter) CheckLimit(ctx context.Context, ipAddress string) (*RateLimitResult, error) {
-	key := fmt.Sprintf("rate_limit:%s", ipAddress)
-	now := time.Now()
-
-	existing, err := rl.storage.Get(ctx, key)
-	if err != nil {
-		return nil, err
-	}
-
-	// No record = first attempt
-	if existing == nil {
-		return &RateLimitResult{
-			Allowed:           true,
-			AttemptsRemaining: rl.MaxAttempts - 1,
-		}, nil
-	}
-
-	// Check if locked out
-	if lockedUntil, ok := existing["locked_until"].(time.Time); ok {
-		if lockedUntil.After(now) {
-			return &RateLimitResult{
-				Allowed:           false,
-				AttemptsRemaining: 0,
-				LockoutExpiresAt:  &lockedUntil,
-			}, nil
-		}
-	}
-
-	// Check if reset window has passed
-	if recordTime, ok := existing["recorded_at"].(time.Time); ok {
-		resetDuration := time.Duration(rl.ResetHours) * time.Hour
-		if now.After(recordTime.Add(resetDuration)) {
-			// Reset counter
-			return &RateLimitResult{
-				Allowed:           true,
-				AttemptsRemaining: rl.MaxAttempts - 1,
-			}, nil
-		}
-	}
-
-	// Within tracking window
-	attempts := 0
-	if a, ok := existing["attempts"].(int); ok {
-		attempts = a
-	}
-
-	return &RateLimitResult{
-		Allowed:           attempts < rl.MaxAttempts,
-		AttemptsRemaining: max(0, rl.MaxAttempts-attempts),
-	}, nil
-}
-
-// RecordFailure records a failed login attempt
-func (rl *RateLimiter) RecordFailure(ctx context.Context, ipAddress string) error {
-	key := fmt.Sprintf("rate_limit:%s", ipAddress)
-	now := time.Now()
-
-	existing, err := rl.storage.Get(ctx, key)
-	if err != nil {
+func (s *InMemoryStorage) Update(
+	ctx context.Context,
+	key string,
+	change func(*RateLimitState) (*RateLimitState, error),
+) error {
+	if err := ctx.Err(); err != nil {
 		return err
 	}
 
-	attempts := 0
-	if existing != nil {
-		if a, ok := existing["attempts"].(int); ok {
-			attempts = a
-		}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var current *RateLimitState
+	if value, ok := s.store[key]; ok {
+		copy := value
+		current = &copy
 	}
+	next, err := change(current)
+	if err != nil {
+		return err
+	}
+	if next == nil {
+		delete(s.store, key)
+		return nil
+	}
+	s.store[key] = *next
+	return nil
+}
 
-	attempts++
-	lockedUntil := now.Add(time.Duration(rl.LockoutMinutes) * time.Minute)
+type Config struct {
+	MaxAttempts int
+	Lockout     time.Duration
+	ResetWindow time.Duration
+	Storage     RateLimiterStorage
+	Now         func() time.Time
+}
 
-	return rl.storage.Set(ctx, key, map[string]interface{}{
-		"attempts":      attempts,
-		"locked_until":  lockedUntil,
-		"recorded_at":   now,
+type RateLimiter struct {
+	maxAttempts int
+	lockout     time.Duration
+	resetWindow time.Duration
+	storage     RateLimiterStorage
+	now         func() time.Time
+}
+
+func NewRateLimiter(config Config) (*RateLimiter, error) {
+	if config.MaxAttempts <= 0 {
+		return nil, errors.New("max attempts must be positive")
+	}
+	if config.Lockout <= 0 {
+		return nil, errors.New("lockout duration must be positive")
+	}
+	if config.ResetWindow <= 0 {
+		return nil, errors.New("reset window must be positive")
+	}
+	if config.ResetWindow < config.Lockout {
+		return nil, errors.New("reset window must be greater than or equal to lockout duration")
+	}
+	if config.Storage == nil {
+		config.Storage = NewInMemoryStorage()
+	}
+	if config.Now == nil {
+		config.Now = time.Now
+	}
+	return &RateLimiter{
+		maxAttempts: config.MaxAttempts,
+		lockout:     config.Lockout, resetWindow: config.ResetWindow,
+		storage: config.Storage, now: config.Now,
+	}, nil
+}
+
+func (rl *RateLimiter) CheckLimit(ctx context.Context, clientID string) (RateLimitResult, error) {
+	if err := validateClientID(clientID); err != nil {
+		return RateLimitResult{}, err
+	}
+	now := rl.now()
+	result := RateLimitResult{Allowed: true, AttemptsRemaining: rl.maxAttempts}
+	err := rl.storage.Update(ctx, keyPrefix+clientID, func(state *RateLimitState) (*RateLimitState, error) {
+		if state == nil || !now.Before(state.RecordedAt.Add(rl.resetWindow)) {
+			return nil, nil
+		}
+		if now.Before(state.LockedUntil) {
+			expires := state.LockedUntil
+			result = RateLimitResult{Allowed: false, LockoutExpiresAt: &expires}
+			return state, nil
+		}
+		if !state.LockedUntil.IsZero() {
+			return nil, nil
+		}
+		result.AttemptsRemaining = max(0, rl.maxAttempts-state.Attempts)
+		result.Allowed = result.AttemptsRemaining > 0
+		return state, nil
+	})
+	return result, err
+}
+
+func (rl *RateLimiter) RecordFailure(ctx context.Context, clientID string) error {
+	if err := validateClientID(clientID); err != nil {
+		return err
+	}
+	now := rl.now()
+	return rl.storage.Update(ctx, keyPrefix+clientID, func(state *RateLimitState) (*RateLimitState, error) {
+		if state == nil || !now.Before(state.RecordedAt.Add(rl.resetWindow)) {
+			state = &RateLimitState{RecordedAt: now}
+		}
+		state.Attempts++
+		if state.Attempts >= rl.maxAttempts {
+			state.LockedUntil = now.Add(rl.lockout)
+		}
+		return state, nil
 	})
 }
 
-// RecordSuccess records a successful login (resets counter)
-func (rl *RateLimiter) RecordSuccess(ctx context.Context, ipAddress string) error {
-	key := fmt.Sprintf("rate_limit:%s", ipAddress)
-	return rl.storage.Delete(ctx, key)
+func (rl *RateLimiter) RecordSuccess(ctx context.Context, clientID string) error {
+	return rl.Reset(ctx, clientID)
 }
 
-// Reset manually resets rate limit for an IP (admin action)
-func (rl *RateLimiter) Reset(ctx context.Context, ipAddress string) error {
-	key := fmt.Sprintf("rate_limit:%s", ipAddress)
-	return rl.storage.Delete(ctx, key)
+func (rl *RateLimiter) Reset(ctx context.Context, clientID string) error {
+	if err := validateClientID(clientID); err != nil {
+		return err
+	}
+	return rl.storage.Update(ctx, keyPrefix+clientID, func(*RateLimitState) (*RateLimitState, error) {
+		return nil, nil
+	})
 }
 
-// ExtractClientIP extracts client IP from request headers
-func ExtractClientIP(headers map[string]string) string {
-	// Check CloudFlare
-	if cfIP, ok := headers["CF-Connecting-IP"]; ok {
-		return cfIP
+func validateClientID(clientID string) error {
+	if strings.TrimSpace(clientID) == "" {
+		return errors.New("client identifier must not be empty")
+	}
+	if len(clientID) > 255 {
+		return errors.New("client identifier exceeds 255 bytes")
+	}
+	return nil
+}
+
+// ExtractClientIP uses forwarding headers only when the immediate peer is in trustedProxyCIDRs.
+func ExtractClientIP(remoteAddr string, headers http.Header, trustedProxyCIDRs []string) (net.IP, error) {
+	host, _, err := net.SplitHostPort(remoteAddr)
+	if err != nil {
+		host = remoteAddr
+	}
+	peer := net.ParseIP(strings.TrimSpace(host))
+	if peer == nil {
+		return nil, fmt.Errorf("invalid remote address %q", remoteAddr)
+	}
+	trusted, err := parseCIDRs(trustedProxyCIDRs)
+	if err != nil {
+		return nil, err
+	}
+	if !containsIP(trusted, peer) {
+		return peer, nil
 	}
 
-	// Check X-Forwarded-For
-	if forwardedFor, ok := headers["X-Forwarded-For"]; ok {
-		// Take the last IP (rightmost trusted proxy)
-		return forwardedFor
+	forwarded := strings.TrimSpace(headers.Get("X-Forwarded-For"))
+	if forwarded == "" {
+		return peer, nil
 	}
-
-	// Direct connection
-	return "0.0.0.0"
+	parts := strings.Split(forwarded, ",")
+	for i := len(parts) - 1; i >= 0; i-- {
+		ip := net.ParseIP(strings.TrimSpace(parts[i]))
+		if ip == nil {
+			return nil, errors.New("invalid X-Forwarded-For header")
+		}
+		if !containsIP(trusted, ip) {
+			return ip, nil
+		}
+	}
+	return peer, nil
 }
 
-// Helper function
-func max(a, b int) int {
-	if a > b {
-		return a
+func parseCIDRs(values []string) ([]*net.IPNet, error) {
+	networks := make([]*net.IPNet, 0, len(values))
+	for _, value := range values {
+		_, network, err := net.ParseCIDR(value)
+		if err != nil {
+			return nil, fmt.Errorf("invalid trusted proxy CIDR %q: %w", value, err)
+		}
+		networks = append(networks, network)
 	}
-	return b
+	return networks, nil
 }
 
-// Hash helper for logging (PII protection)
-func HashIP(ip string) string {
-	hash := sha256.Sum256([]byte(ip))
-	return hex.EncodeToString(hash[:])
+func containsIP(networks []*net.IPNet, ip net.IP) bool {
+	for _, network := range networks {
+		if network.Contains(ip) {
+			return true
+		}
+	}
+	return false
+}
+
+// HashIP returns a keyed digest suitable for correlating an IP without storing it in logs.
+func HashIP(ip, secret string) (string, error) {
+	parsed := net.ParseIP(ip)
+	if parsed == nil {
+		return "", errors.New("invalid IP address")
+	}
+	if len(secret) < 32 {
+		return "", errors.New("hash secret must be at least 32 bytes")
+	}
+	hash := hmac.New(sha256.New, []byte(secret))
+	_, _ = hash.Write([]byte(parsed.String()))
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }

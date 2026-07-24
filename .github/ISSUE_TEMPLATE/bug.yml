@@ -1,0 +1,41 @@
+name: Component bug
+description: Report incorrect or unsafe behavior in a reusable component.
+title: "bug: "
+labels: ["type: bug", "status: triage"]
+body:
+  - type: dropdown
+    id: maturity
+    attributes:
+      label: Component maturity
+      options:
+        - production-ready
+        - reference
+        - experimental
+    validations:
+      required: true
+  - type: input
+    id: path
+    attributes:
+      label: Component path
+      placeholder: typescript/integrations/example.ts
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed and expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Runtime and environment
+      description: Include versions, but never credentials or sensitive data.
+    validations:
+      required: true

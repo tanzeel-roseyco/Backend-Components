@@ -4,27 +4,57 @@
   "description": "TypeScript/Node.js implementations of reusable backend components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js"
+    },
+    "./auth/portable-auth-core": {
+      "types": "./dist/auth/portable-auth-core.d.ts",
+      "require": "./dist/auth/portable-auth-core.js"
+    },
+    "./business-logic/*": {
+      "types": "./dist/business-logic/*.d.ts",
+      "require": "./dist/business-logic/*.js"
+    },
+    "./infrastructure/*": {
+      "types": "./dist/infrastructure/*.d.ts",
+      "require": "./dist/infrastructure/*.js"
+    },
+    "./integrations/*": {
+      "types": "./dist/integrations/*.d.ts",
+      "require": "./dist/integrations/*.js"
+    },
+    "./utilities/*": {
+      "types": "./dist/utilities/*.d.ts",
+      "require": "./dist/utilities/*.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.core.json",
     "typecheck": "tsc -p tsconfig.core.json --noEmit",
-    "dev": "tsc --watch",
-    "test": "jest",
-    "test:core": "rm -rf .test-dist && ./node_modules/.bin/tsc --strict --target ES2022 --module commonjs --moduleResolution node --outDir .test-dist utilities/spam-submission-guard.ts utilities/secret-redaction.ts auth/portable-auth-core.ts infrastructure/workflow-lease.ts infrastructure/ssrf-safe-downloader.ts infrastructure/ai-cost-guard.ts infrastructure/resumable-file-transfer.ts infrastructure/agent-action-spool.ts integrations/docusign-client.ts integrations/dotloop-client.ts integrations/gotenberg-client.ts integrations/google-workspace-rest.ts integrations/stripe-commerce.ts integrations/telegram-intake.ts integrations/twilio-voice.ts business-logic/abandoned-cart-recovery.ts business-logic/lead-sequence-engine.ts business-logic/quote-document-workflow.ts business-logic/signed-document-processor.ts && NODE_ENV=test node --test utilities/*.test.js auth/*.test.js infrastructure/*.test.js integrations/*.test.js business-logic/*.test.js",
-    "test:watch": "jest --watch",
-    "lint": "eslint --config eslint.core.cjs $(tr -d '\\r' < core-files.txt | tr '\\n' ' ')",
-    "format": "prettier --write \"src/**/*.ts\""
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.38.0",
-    "@prisma/client": "^5.0.0",
-    "zod": "^3.22.0"
+    "dev": "tsc -p tsconfig.core.json --watch",
+    "test:core": "rm -rf .test-dist && tsc -p tsconfig.core.json --outDir .test-dist && NODE_ENV=test node --test utilities/*.test.js auth/*.test.js infrastructure/*.test.js integrations/*.test.js business-logic/*.test.js",
+    "test:package": "npm run build && node -e \"const library = require('.'); if (Object.keys(library).length !== 19) throw new Error('package entry point is incomplete')\"",
+    "verify": "npm run typecheck && npm run lint && npm run test:core && npm run test:package && npm audit --audit-level=high",
+    "prepack": "npm run verify",
+    "lint": "eslint $(tr -d '\\r' < core-files.txt | tr '\\n' ' ')",
+    "format": "prettier --write $(tr -d '\\r' < core-files.txt | tr '\\n' ' ')"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^8.0.0",
-    "jest": "^29.0.0",
+    "eslint": "^9.0.0",
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
   },
@@ -39,5 +69,18 @@
     "typescript"
   ],
   "author": "TeamRoseyCo",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanzeel-roseyco/Backend-Components.git",
+    "directory": "typescript"
+  },
+  "bugs": {
+    "url": "https://github.com/tanzeel-roseyco/Backend-Components/issues"
+  },
+  "homepage": "https://github.com/tanzeel-roseyco/Backend-Components#readme",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }

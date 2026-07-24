@@ -1,0 +1,26 @@
+name: Component proposal
+description: Propose a reusable component backed by a current need.
+title: "component: "
+labels: ["type: component", "status: triage"]
+body:
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Existing use cases
+      description: Name the concrete applications or workflows that already need this component.
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Proposed boundary
+      description: State inputs, outputs, side effects, and external dependencies.
+    validations:
+      required: true
+  - type: textarea
+    id: prior-art
+    attributes:
+      label: Existing implementation or standard alternative
+      description: Link existing repository code or explain why the platform or standard library is insufficient.
+    validations:
+      required: true

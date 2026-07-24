@@ -1,5 +1,9 @@
 # Backend Components
 
+[![CI](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/ci.yml/badge.svg)](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/codeql.yml/badge.svg)](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 This repository is a working library of backend and server-side components for
 people who want to reuse them in their own projects, including projects they
 have not started yet. The code is organized by language and responsibility so a
@@ -30,9 +34,14 @@ Components live in these directories:
 - `go`: a Go rate limiter
 - `shared/sql`: PostgreSQL tenant-isolation migration, tests, and rollback
 
-Every production component has a README beside its source file. That README
+Every component has a README beside its source file. That README
 describes the component's real inputs, dependencies, side effects, errors,
 tests, and known limits. Start there before copying a file.
+
+The machine-readable [components.json](components.json) classifies every
+implementation as `production-ready`, `reference`, or `experimental`.
+[docs/MATURITY.md](docs/MATURITY.md) defines those terms. A directory name or
+README does not override the registry.
 
 The full provenance record is in [BORROW-INVENTORY.md](BORROW-INVENTORY.md).
 [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) records the current
@@ -40,18 +49,21 @@ verification results.
 
 ## Current scope
 
-There are 63 production implementation artifacts in the repository:
+There are 63 implementation artifacts in the repository:
 
 - 52 TypeScript or JavaScript components
 - 9 Python components
 - 1 Go component
 - 1 PostgreSQL tenant-isolation component
 
-Twenty of those capabilities were standardized in the latest reuse pass. They
-include DocuSign, Dotloop, Twilio conference calls, Google Workspace, Gotenberg,
-Stripe, Telegram intake, portable authentication, file-transfer reconciliation,
-agent action handling, AI cost controls, lead sequences, abandoned-cart
-recovery, quote document workflows, and tenant RLS.
+Twenty capabilities currently meet this repository's `production-ready`
+standard: nineteen TypeScript components and one Go component. They include
+DocuSign, Dotloop, Twilio conference
+calls, Google Workspace, Gotenberg, Stripe, Telegram intake, portable
+authentication, file-transfer reconciliation, agent action handling, AI cost
+controls, lead sequences, abandoned-cart recovery, and quote and signed-document
+workflows, plus the concurrency-safe Go rate limiter. Other source remains
+classified as reference or experimental until it passes the same release gates.
 
 The DocuSign adapter and signed-document processor are present now. More
 document-signing adapters for external providers are still in the queue. They
@@ -61,11 +73,12 @@ The GDPR erasure candidate was deliberately excluded and is not implemented.
 
 ## Reusing a component
 
-1. Read the README beside the source file.
-2. Copy the component and any types or helpers named in that README.
-3. Supply the required adapters and environment values from your application.
-4. Copy or recreate the focused tests in the destination project.
-5. Run the destination project's lint, typecheck, unit, and integration checks.
+1. Check the component's maturity in `components.json`.
+2. Read the README beside the source file.
+3. Prefer a stable package export for production-ready TypeScript components.
+4. Supply the required adapters and environment values from your application.
+5. Copy or recreate the focused tests in the destination project.
+6. Run the destination project's lint, typecheck, unit, and integration checks.
 
 Do not assume that copying a component makes its external service work. Provider
 accounts, webhook registration, database tables, permissions, and secrets remain
@@ -89,10 +102,21 @@ npm run lint
 npm run test:core
 ```
 
-`test:core` covers the 19 TypeScript components listed in
+`test:core` covers the 19 production-ready TypeScript components listed in
 `typescript/core-files.txt`. Older components outside that manifest do not all
-use the same test runner, so the command is not a claim of repository-wide test
-coverage.
+use the same test runner and are classified accordingly.
+
+The TypeScript package has a working root import and explicit subpath exports.
+Only built production-ready components are included in its package tarball.
+
+## Architecture and governance
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Engineering standards](.planning/STANDARDS.md)
+- [Security policy](SECURITY.md)
+- [Contributing](CONTRIBUTING.md)
+- [Support](SUPPORT.md)
+- [Changelog](CHANGELOG.md)
 
 ## PostgreSQL check
 
@@ -107,7 +131,8 @@ latest verification used the `supabase/postgres:15.8.1.085` Docker image.
 
 ## What is not promised
 
-The repository does not claim that every component is suitable for every
-application. It does not provide hosted infrastructure, provider accounts,
-database provisioning, or an end-to-end product. A component README may call
-out limits that require changes for a particular workload or security model.
+The repository does not claim that every implementation is production-ready or
+suitable for every application. It does not provide hosted infrastructure,
+provider accounts, database provisioning, or an end-to-end product. A component
+README may call out limits that require changes for a particular workload or
+security model.
