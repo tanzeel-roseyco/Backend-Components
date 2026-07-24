@@ -12,15 +12,15 @@ dependencies = [
   "fastapi==0.116.1",
   "numpy==2.3.2",
   "pandas==2.3.1",
-  "requests==2.32.4",
+  "requests==2.33.0",
 ]
 
 [project.optional-dependencies]
 dev = [
   "mypy==1.17.1",
   "pandas-stubs==2.3.0.250703",
-  "pytest==8.4.1",
-  "pytest-asyncio==1.1.0",
+  "pytest==9.0.3",
+  "pytest-asyncio==1.4.0",
   "ruff==0.12.7",
   "types-requests==2.32.4.20250611",
 ]

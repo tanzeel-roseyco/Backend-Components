@@ -10,3 +10,5 @@ Repository-wide Docker verification, GitHub automation, language packaging,
 adversarial review, and release validation are complete for the `v1.0.0`
 release boundary. PostgreSQL verification runs as the Supabase image's
 administrative database role so pgTAP can exercise authenticated-role RLS.
+Python development and runtime minimums include GitHub's patched releases for
+the repository's disclosed `requests` and `pytest` advisories.
