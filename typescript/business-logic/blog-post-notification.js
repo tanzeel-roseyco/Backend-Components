@@ -26,7 +26,7 @@
  *   - @supabase/supabase-js  (database client)
  *   - global fetch           (Node 18+ / edge runtime; provides the broadcast HTTP call)
  *
- * AIDEV-NOTE: Role = "on publish, notify subscribers". Security/ordering constraints:
+ * Note: Role = "on publish, notify subscribers". Security/ordering constraints:
  *   1. SERVICE_ROLE_KEY grants full DB access — it is read here for a single scoped
  *      SELECT and must never reach the client or a log line.
  *   2. EMAIL_API_SECRET is sent in the request BODY to the provider (their v3 API
@@ -43,7 +43,7 @@
 
 'use strict';
 
-// AIDEV-NOTE: Kept as the original DB dependency. If your stack differs, swap this
+// Note: Kept as the original DB dependency. If your stack differs, swap this
 // adapter for your own data source — see loadPostBySlug() interface below.
 const { createClient } = require('@supabase/supabase-js');
 
@@ -72,7 +72,7 @@ const BROADCAST_ENDPOINT = 'https://api.convertkit.com/v3/broadcasts';
 /**
  * Create a Supabase client for server-side reads, or null if unconfigured.
  *
- * AIDEV-NOTE: Sessions disabled — this is a stateless server context, so we never
+ * Note: Sessions disabled — this is a stateless server context, so we never
  * want token refresh or persisted auth state.
  *
  * @returns {import('@supabase/supabase-js').SupabaseClient | null}
@@ -96,7 +96,7 @@ const getSupabaseClient = () => {
 /**
  * Load a single published blog post by slug.
  *
- * AIDEV-NOTE: This is the one data-access seam. To use a non-Supabase store,
+ * Note: This is the one data-access seam. To use a non-Supabase store,
  * replace the body of this function with your own query — the contract is:
  * given a slug, return a BlogPost or null.
  *
@@ -137,7 +137,7 @@ const extractKeyPoints = (content) => {
   const safeContent = typeof content === 'string' ? content : '';
 
   // Match bullet ("- ", "* ", "• ") or numbered ("1. ") list items.
-  // AIDEV-NOTE: (?=\n|$) stops each match at a line boundary so multi-line
+  // Note: (?=\n|$) stops each match at a line boundary so multi-line
   // paragraphs don't get swallowed into a single "list item".
   const listMatches =
     safeContent.match(/[-*•]\s+(.+?)(?=\n|$)/g) ||
@@ -171,7 +171,7 @@ const extractKeyPoints = (content) => {
 /**
  * Escape a string for safe interpolation into HTML.
  *
- * AIDEV-NOTE: Post fields (title/excerpt/key points) originate from stored content
+ * Note: Post fields (title/excerpt/key points) originate from stored content
  * and are injected into an HTML email. Escape them to avoid broken markup or
  * injected tags in email clients.
  *
@@ -333,7 +333,7 @@ exports.handler = async (event) => {
   }
 
   // Authorization gate: only enforced when TRIGGER_SECRET is configured.
-  // AIDEV-NOTE: Netlify lowercases header keys; read the lowercased name.
+  // Note: Netlify lowercases header keys; read the lowercased name.
   if (TRIGGER_SECRET) {
     const provided = (event.headers && event.headers['x-trigger-secret']) || '';
     if (provided !== TRIGGER_SECRET) {
@@ -382,13 +382,13 @@ exports.handler = async (event) => {
 
     const keyPoints = extractKeyPoints(post.content);
     const emailHtml = buildEmailHtml(post, keyPoints, postUrl);
-    // AIDEV-NOTE: emailText is built for parity/reference; the provider derives a
+    // Note: emailText is built for parity/reference; the provider derives a
     // text part from the HTML, but keep it available for providers that accept both.
     const emailText = buildEmailText(post, keyPoints, postUrl);
     void emailText;
 
     // Create the broadcast.
-    // AIDEV-NOTE: api_secret goes in the BODY per the provider v3 contract — do not
+    // Note: api_secret goes in the BODY per the provider v3 contract — do not
     // move it to a header and never log this payload.
     const providerResponse = await fetch(BROADCAST_ENDPOINT, {
       method: 'POST',
@@ -406,7 +406,7 @@ exports.handler = async (event) => {
 
     if (!providerResponse.ok) {
       const errorData = await providerResponse.json().catch(() => ({}));
-      // AIDEV-NOTE: Log status + provider error body only — never the request body,
+      // Note: Log status + provider error body only — never the request body,
       // which carries EMAIL_API_SECRET.
       console.error('Email provider error:', providerResponse.status, errorData);
       return {

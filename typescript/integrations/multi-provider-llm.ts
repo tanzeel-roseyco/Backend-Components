@@ -23,7 +23,7 @@
  *     transport for all three providers.
  *   - A preferences store (see `PreferencesStore`) for per-user fallback keys.
  *
- * AIDEV-NOTE: Adapted and generalized from a production codebase.
+ * Note: Adapted and generalized from a production codebase.
  * Role: single source of truth for "which LLM client + model do we use for
  * this user right now". SECURITY: never log the resolved API key; the returned
  * client embeds the secret. ORDERING is load-bearing — admin env keys are
@@ -34,7 +34,7 @@
 
 import OpenAI from "openai";
 
-// AIDEV-NOTE: Original source imported a Prisma client singleton:
+// Note: Original source imported a Prisma client singleton:
 //   import { prisma } from "@/lib/prisma";
 // That internal dependency is replaced here by the injectable `PreferencesStore`
 // port below so this module is self-contained and framework-agnostic.
@@ -59,7 +59,7 @@ export interface UserPreferences {
  * Port for reading per-user preferences. Implement this against whatever
  * persistence layer the host app uses (e.g. Prisma, Drizzle, an HTTP service).
  *
- * AIDEV-NOTE: Injecting this port keeps domain logic free of ORM/vendor types.
+ * Note: Injecting this port keeps domain logic free of ORM/vendor types.
  */
 export interface PreferencesStore {
   /** Returns the user's preferences, or null/undefined if none are stored. */

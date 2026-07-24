@@ -28,7 +28,7 @@
  *   { choice: string, page: string|null, user_agent: string|null,
  *     ip_address: string|null }
  *
- * AIDEV-NOTE: Role = write-side collector for a public poll widget.
+ * Note: Role = write-side collector for a public poll widget.
  *   Security/ordering constraints:
  *   - SERVICE_ROLE_KEY grants full DB access; it must ONLY ever live in
  *     server-side env, never reach the client bundle. Read via env only.
@@ -41,7 +41,7 @@
  *     the admin's mail client.
  */
 
-// AIDEV-NOTE: CommonJS require kept to match the serverless runtime's module
+// Note: CommonJS require kept to match the serverless runtime's module
 // system. Swap to ESM imports if the target runtime uses "type": "module".
 const { Resend } = require('resend');
 const { createClient } = require('@supabase/supabase-js');
@@ -59,7 +59,7 @@ const { createClient } = require('@supabase/supabase-js');
  * @property {string} body                  JSON-serialized response body.
  */
 
-// AIDEV-NOTE: Cap attacker-controlled inputs before they hit the DB or the
+// Note: Cap attacker-controlled inputs before they hit the DB or the
 // notification email. A public poll widget must not let a caller stuff
 // arbitrarily large strings (storage abuse / oversized email payloads).
 // Limits are generous for legitimate use but bounded.
@@ -78,14 +78,14 @@ const MAX_IP_LEN = 128;
 const clamp = (value, max) => (value.length > max ? value.slice(0, max) : value);
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
-// AIDEV-NOTE: Only instantiate the email client when a key is present so the
+// Note: Only instantiate the email client when a key is present so the
 // function still boots (and DB persistence still works) without email config.
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
 /**
  * Escape a string for safe interpolation into HTML.
  *
- * AIDEV-NOTE: The notification email embeds user-controlled fields (choice,
+ * Note: The notification email embeds user-controlled fields (choice,
  * page, user-agent, ip). Without escaping, a crafted payload could inject
  * markup/script into the admin's mail client. Always escape before interpolation.
  *
@@ -116,7 +116,7 @@ const getSupabaseClient = () => {
 
   return createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
-      // AIDEV-NOTE: No token refresh / session persistence on the server —
+      // Note: No token refresh / session persistence on the server —
       // this is a stateless service-role client, not a user session.
       autoRefreshToken: false,
       persistSession: false,
@@ -142,7 +142,7 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    // AIDEV-NOTE: Coerce -> trim -> clamp every untrusted field so oversized
+    // Note: Coerce -> trim -> clamp every untrusted field so oversized
     // payloads cannot bloat the DB row or the notification email.
     const choice = clamp(String(body.choice || '').trim(), MAX_CHOICE_LEN);
     const page = clamp(String(body.page || '').trim(), MAX_PAGE_LEN);
@@ -150,7 +150,7 @@ exports.handler = async (event) => {
       String((event.headers && (event.headers['user-agent'] || event.headers['User-Agent'])) || ''),
       MAX_UA_LEN
     );
-    // AIDEV-NOTE: Prefer the platform's connection IP header, then fall back to
+    // Note: Prefer the platform's connection IP header, then fall back to
     // x-forwarded-for. Both are client-influenced; treat as untrusted metadata.
     const ip = clamp(
       String(
@@ -170,7 +170,7 @@ exports.handler = async (event) => {
     const supabase = getSupabaseClient();
     if (supabase) {
       try {
-        // AIDEV-NOTE: Values are passed as parameterized inserts — safe from
+        // Note: Values are passed as parameterized inserts — safe from
         // SQL injection. Empty strings normalized to null for clean columns.
         const { data, error } = await supabase
           .from('poll_results')
@@ -195,7 +195,7 @@ exports.handler = async (event) => {
           console.log('Poll result saved successfully:', data);
         }
       } catch (dbErr) {
-        // AIDEV-NOTE: Swallow-and-log is intentional here — a DB failure must
+        // Note: Swallow-and-log is intentional here — a DB failure must
         // not block the email flow or fail the request. Fail-safe for UX.
         console.error('Exception saving poll result:', dbErr);
         console.error('Exception details', {
@@ -215,7 +215,7 @@ exports.handler = async (event) => {
     // --- 2. Send admin notification email (best-effort) ---
     let emailSent = false;
     if (RESEND_API_KEY && resend) {
-      // AIDEV-NOTE: Recipient/sender come from env with neutral fallbacks.
+      // Note: Recipient/sender come from env with neutral fallbacks.
       // Set CONTACT_TO_EMAIL / CONTACT_FROM_EMAIL in production.
       const toAdmin = process.env.CONTACT_TO_EMAIL || 'admin@example.com';
       const fromAddress = process.env.CONTACT_FROM_EMAIL || 'Example Co <no-reply@example.com>';
@@ -225,7 +225,7 @@ exports.handler = async (event) => {
           from: fromAddress,
           to: toAdmin,
           subject: 'New poll response',
-          // AIDEV-NOTE: All interpolated fields are HTML-escaped to prevent
+          // Note: All interpolated fields are HTML-escaped to prevent
           // markup/script injection into the admin's mail client.
           html: `
             <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #111;">
@@ -240,14 +240,14 @@ exports.handler = async (event) => {
         emailSent = true;
         console.log('Poll notification email sent successfully');
       } catch (emailErr) {
-        // AIDEV-NOTE: Email failure is non-fatal — logged, never surfaced.
+        // Note: Email failure is non-fatal — logged, never surfaced.
         console.error('Failed sending poll notification email:', emailErr);
       }
     } else {
       console.error('Poll function misconfigured: RESEND_API_KEY missing');
     }
 
-    // AIDEV-NOTE: Always return success for good UX, even if a side effect
+    // Note: Always return success for good UX, even if a side effect
     // failed. `saved`/`emailSent` flags let callers observe partial outcomes.
     return {
       statusCode: 200,
@@ -258,7 +258,7 @@ exports.handler = async (event) => {
       }),
     };
   } catch (err) {
-    // AIDEV-NOTE: Catch-all for malformed bodies / unexpected errors. Still
+    // Note: Catch-all for malformed bodies / unexpected errors. Still
     // returns 200 for UX; the error is logged server-side only, never leaked.
     console.error('Poll function error:', err);
     console.error('Error details:', {

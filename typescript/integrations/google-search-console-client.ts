@@ -21,7 +21,7 @@
  * Key dependencies:
  *   googleapis — official Google API client (provides auth + webmasters v3).
  *
- * AIDEV-NOTE: Role — read-only GSC data-access adapter at the integration
+ * Note: Role — read-only GSC data-access adapter at the integration
  * boundary. Security/ordering constraints:
  *   - Credentials are ONLY sourced from env vars or explicit constructor args;
  *     never hardcode a key here (public repo). Fail loud if neither is set.
@@ -119,14 +119,14 @@ export class GscClient {
   /**
    * Builds an authenticated Search Console (webmasters v3) client.
    *
-   * AIDEV-NOTE: The service-account key may arrive as inline JSON or as a file
+   * Note: The service-account key may arrive as inline JSON or as a file
    * path. We try JSON.parse first; on failure we treat the value as a keyFile
    * path. This is the one spot allowed to branch on credential shape.
    *
    * @returns An authenticated webmasters v3 client.
    */
   private async getClient() {
-    // Fail loud (see file-level AIDEV-NOTE) if required config is missing.
+    // Fail loud (see file-level NOTE) if required config is missing.
     // Validated lazily here rather than in the constructor so that importing
     // this module — and the `gscClient` singleton below — never throws just
     // because env vars are unset; failure surfaces only on actual use.
@@ -152,7 +152,7 @@ export class GscClient {
 
     const auth = new google.auth.GoogleAuth({
       ...(credentials ? { credentials } : { keyFile: this.serviceAccountKey }),
-      // Read-only scope — do not widen (see file-level AIDEV-NOTE).
+      // Read-only scope — do not widen (see file-level NOTE).
       scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
     });
 

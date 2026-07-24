@@ -24,7 +24,7 @@
  *                            a different persistence layer (see the DbClient
  *                            interface declared below).
  *
- * AIDEV-NOTE: This handler persists PII (email, name, IP, user-agent). Treat
+ * Note: This handler persists PII (email, name, IP, user-agent). Treat
  * the table as sensitive: restrict read access, honor retention/erasure
  * policies, and NEVER log the service-role key. The service-role key bypasses
  * row-level security, so this code MUST run server-side only. Insert failures
@@ -36,7 +36,7 @@
 
 const { createClient } = require('@supabase/supabase-js');
 
-// AIDEV-NOTE: Default table name; override via DOWNLOADS_TABLE without a code change.
+// Note: Default table name; override via DOWNLOADS_TABLE without a code change.
 const DEFAULT_TABLE = 'audio_downloads';
 
 /**
@@ -96,7 +96,7 @@ function createDbClient() {
     return null;
   }
 
-  // AIDEV-NOTE: Disable token auto-refresh/session persistence — this is a
+  // Note: Disable token auto-refresh/session persistence — this is a
   // stateless server context, not a long-lived authenticated user session.
   return createClient(url, serviceKey, {
     auth: {
@@ -131,12 +131,12 @@ function readHeader(headers, lowerKey) {
  * @returns {string} The best-guess client IP, or '' if none present.
  */
 function extractClientIp(headers) {
-  // AIDEV-NOTE: Use case-insensitive reads — Lambda/API Gateway do not lowercase
+  // Note: Use case-insensitive reads — Lambda/API Gateway do not lowercase
   // header keys the way Netlify does, so a direct lookup can miss the header.
   const platformIp = readHeader(headers, 'x-nf-client-connection-ip');
   if (platformIp) return platformIp;
 
-  // AIDEV-NOTE: X-Forwarded-For is "client, proxy1, proxy2..." — the left-most
+  // Note: X-Forwarded-For is "client, proxy1, proxy2..." — the left-most
   // entry is the originating client; take only that and drop the proxy chain.
   const forwarded = readHeader(headers, 'x-forwarded-for');
   if (forwarded) return forwarded.split(',')[0].trim();
@@ -157,7 +157,7 @@ function extractClientIp(headers) {
  */
 async function recordDownload(db, record, table = DEFAULT_TABLE) {
   const { error } = await db.from(table).insert(record);
-  // AIDEV-NOTE: supabase-js resolves (not rejects) on DB errors — must inspect
+  // Note: supabase-js resolves (not rejects) on DB errors — must inspect
   // `error` explicitly, otherwise write failures pass silently.
   if (error) {
     throw new Error(`Download insert failed: ${String(error)}`);
@@ -216,7 +216,7 @@ async function handler(event) {
       try {
         await recordDownload(db, record, process.env.DOWNLOADS_TABLE || DEFAULT_TABLE);
       } catch (dbErr) {
-        // AIDEV-NOTE: Log without leaking the payload's PII beyond the message.
+        // Note: Log without leaking the payload's PII beyond the message.
         console.error('Failed saving download event', dbErr);
         return { statusCode: 500, body: JSON.stringify({ error: 'Failed to track download' }) };
       }

@@ -18,7 +18,7 @@
  * Key dependencies:
  *   - Node.js built-ins only: `node:fs`, `node:path`. No third-party packages.
  *
- * AIDEV-NOTE: Role — pure build-time artifact generation; intended to run in a
+ * Note: Role — pure build-time artifact generation; intended to run in a
  * build/prebuild step, NOT at request time. Ordering: `writeSitemap` must run
  * AFTER any dynamic data source (blog/CMS export) is available, otherwise the
  * dynamic section will be empty. Security: `origin` and every route `path` are
@@ -29,12 +29,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-// AIDEV-NOTE: sitemaps.org caps a single sitemap file at 50,000 URLs (and 50MB
+// Note: sitemaps.org caps a single sitemap file at 50,000 URLs (and 50MB
 // uncompressed). Beyond this a sitemap index splitting into multiple files is
 // required; we surface a warning rather than silently emit an invalid file.
 const MAX_URLS_PER_SITEMAP = 50_000;
 
-// AIDEV-NOTE: Original imported site/route/blog config from internal modules:
+// Note: Original imported site/route/blog config from internal modules:
 //   import { promotableBlogPosts } from '../src/data/blogPosts';
 //   import { SITEMAP_ROUTES } from '../src/config/routes';
 //   import { SITE_ORIGIN } from '../src/config/site';
@@ -108,7 +108,7 @@ export interface SitemapOptions {
 /**
  * Escape the five XML predefined entities so untrusted paths/origins cannot
  * break out of the surrounding XML context.
- * AIDEV-NOTE: Order matters — escape "&" first so we don't double-escape the
+ * Note: Order matters — escape "&" first so we don't double-escape the
  * "&" introduced by the other replacements.
  */
 function escapeXml(value: string): string {
@@ -181,7 +181,7 @@ export function generateSitemap(options: SitemapOptions = {}): string {
     ),
   ];
 
-  // AIDEV-NOTE: `today` is computed once so every fallback <lastmod> in a single
+  // Note: `today` is computed once so every fallback <lastmod> in a single
   // run is consistent, rather than drifting across calls near midnight.
   const today = new Date().toISOString().split('T')[0];
 

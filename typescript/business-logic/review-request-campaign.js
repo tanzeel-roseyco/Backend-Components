@@ -30,7 +30,7 @@
  *   id, name, email, location, status, created_at,
  *   review_request_sent (bool), review_request_sent_at (timestamptz)
  *
- * AIDEV-NOTE: Ordering/security constraints —
+ * Note: Ordering/security constraints —
  *   1. Only completed bookings older than the delay window are eligible; the
  *      delay both respects platform review-timing policy and gives the customer
  *      time to feel the service outcome.
@@ -127,7 +127,7 @@ const getDbClient = () => {
  */
 
 /**
- * AIDEV-NOTE: Location data below is illustrative only. Real deployments should
+ * Note: Location data below is illustrative only. Real deployments should
  * pass their own `reviewLinksByLocation` / `serviceAreaCities` via config or env.
  * The two-tier routing (physical clinic -> Google link, service-area city ->
  * social page) is the real generalized logic that was borrowed.
@@ -295,7 +295,7 @@ const runReviewCampaign = async ({ bookingIds, config: overrides }) => {
     query = query.in('id', bookingIds);
   }
 
-  // AIDEV-NOTE: Deliberate rate limit — caps blast radius per run to stay under
+  // Note: Deliberate rate limit — caps blast radius per run to stay under
   // review-platform spam thresholds. Do not remove.
   query = query.limit(config.maxPerRun);
 
@@ -382,7 +382,7 @@ const handler = async (event) => {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
-  // AIDEV-NOTE: Authorization is enforced here (not in runReviewCampaign) so the
+  // Note: Authorization is enforced here (not in runReviewCampaign) so the
   // core logic stays transport-agnostic. This endpoint sends real customer email,
   // so it must never be publicly triggerable. Fail closed: if the shared secret
   // is unset, treat the endpoint as misconfigured rather than open.

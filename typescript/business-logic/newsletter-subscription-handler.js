@@ -33,14 +33,14 @@
  *   - @supabase/supabase-js        Database client.
  *   - global fetch                 Node 18+ / edge runtime built-in (Kit HTTP calls).
  *
- * AIDEV-NOTE: Role = public subscribe boundary. Security/ordering constraints:
+ * Note: Role = public subscribe boundary. Security/ordering constraints:
  *   - ALL secrets come from env only; never hardcode. Service-role DB key must
  *     stay server-side (this file), never shipped to a client bundle.
  *   - Side effects are ordered DB -> Kit -> emails, but each is best-effort and
  *     wrapped so one failure does not abort the others. The request only 5xxs
  *     when the email provider is unconfigured, or when BOTH emails fail.
  *   - `email`/`name` are interpolated into HTML email bodies. Callers upstream
- *     should validate/normalize; see AIDEV-TODO on escapeHtml below — user input
+ *     should validate/normalize; see TODO on escapeHtml below — user input
  *     is currently HTML-escaped defensively here to prevent injection into the
  *     admin/subscriber emails.
  */
@@ -50,7 +50,7 @@
 const { Resend } = require('resend');
 const { createClient } = require('@supabase/supabase-js');
 
-// AIDEV-NOTE: Every secret is read from env with an empty-string default so the
+// Note: Every secret is read from env with an empty-string default so the
 // module loads even when a given integration is intentionally disabled.
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
@@ -66,11 +66,11 @@ const KIT_FORM_ID_WAITLIST = process.env.KIT_FORM_ID_WAITLIST || '';
 const LIST_NEWSLETTER = 'newsletter';
 const LIST_WAITLIST = 'waitlist';
 
-// AIDEV-NOTE: Deliberately conservative email shape check — this is a boundary
+// Note: Deliberately conservative email shape check — this is a boundary
 // guard, not full RFC 5322 validation. It rejects obviously malformed input
 // (and stray whitespace/newlines that could confuse the mail provider) before
 // we spend a DB write and an outbound email `to:` on garbage. Upstream schema
-// validation should still run; see AIDEV-TODO on escapeHtml.
+// validation should still run; see TODO on escapeHtml.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
@@ -89,7 +89,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * @property {string} [source]             Free-text acquisition source, e.g. "website".
  */
 
-// AIDEV-NOTE: Internal DB client factory. Returns null (not throwing) when the
+// Note: Internal DB client factory. Returns null (not throwing) when the
 // database is unconfigured so the caller can degrade gracefully. If your project
 // centralizes this, replace with a shared import, e.g.:
 //   const { getSupabaseClient } = require('../lib/supabase');
@@ -115,7 +115,7 @@ const getSupabaseClient = () => {
 
 /**
  * Escape a string for safe interpolation into HTML email bodies.
- * AIDEV-TODO: Upstream request validation (schema/allowlist) should still run at
+ * TODO: Upstream request validation (schema/allowlist) should still run at
  * the API gateway; this is defense-in-depth against HTML/script injection into
  * the confirmation and admin notification emails.
  * @param {string} value
@@ -148,7 +148,7 @@ exports.handler = async (event) => {
     /** @type {SubscribeInput} */
     const body = JSON.parse(event.body || '{}');
     const email = (body.email || '').trim();
-    // AIDEV-NOTE: Cap free-text fields so a hostile caller can't push oversized
+    // Note: Cap free-text fields so a hostile caller can't push oversized
     // payloads into the DB column or the outbound email bodies. Truncation is a
     // safe degrade (still delivers a valid signup); email is length-checked
     // against the RFC 5321 254-char limit and rejected rather than truncated.
@@ -168,7 +168,7 @@ exports.handler = async (event) => {
     const supabase = getSupabaseClient();
     if (supabase) {
       try {
-        // AIDEV-NOTE: supabase-js resolves (does NOT reject) on DB-level errors —
+        // Note: supabase-js resolves (does NOT reject) on DB-level errors —
         // constraint violations, RLS denials, etc. surface via the returned
         // `error` object, so we must inspect it explicitly. The try/catch only
         // guards transport-level throws (network/DNS).
@@ -239,7 +239,7 @@ exports.handler = async (event) => {
       return { statusCode: 500, body: JSON.stringify({ error: 'Email service not configured' }) };
     }
 
-    // AIDEV-NOTE: From/To identity is fully env-driven. Placeholders shown are
+    // Note: From/To identity is fully env-driven. Placeholders shown are
     // safe non-routable examples; real values belong in host env config only.
     const toAdmin = process.env.CONTACT_TO_EMAIL || 'admin@example.com';
     const fromAddress = process.env.CONTACT_FROM_EMAIL || 'Example Co <hello@example.com>';

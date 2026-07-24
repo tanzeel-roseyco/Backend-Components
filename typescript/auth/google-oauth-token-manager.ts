@@ -19,7 +19,7 @@
  * Key dependencies:
  *   - googleapis (google.auth.OAuth2, google.calendar)
  *
- * AIDEV-NOTE: This module owns Google token lifecycle only; it deliberately
+ * Note: This module owns Google token lifecycle only; it deliberately
  * does NOT know about your persistence engine (Prisma/Drizzle/SQL/etc.) — that
  * lives behind `TokenStore` so this file stays reusable and secret-free.
  * Ordering/security constraints:
@@ -33,7 +33,7 @@
 import { google } from "googleapis";
 import type { Auth, calendar_v3 } from "googleapis";
 
-// AIDEV-NOTE: Original source imported an internal persistence module:
+// Note: Original source imported an internal persistence module:
 //   import { prisma } from "@/lib/prisma";
 // That concrete dependency is replaced by the `TokenStore` port below so this
 // component is self-contained. Provide any adapter that satisfies the interface.
@@ -155,7 +155,7 @@ export class GoogleOAuthTokenManager {
       expiry_date: account.expiresAt ? account.expiresAt * 1000 : undefined,
     });
 
-    // AIDEV-NOTE: Attach the persistence listener BEFORE any refresh can fire.
+    // Note: Attach the persistence listener BEFORE any refresh can fire.
     // Google emits `tokens` on automatic refresh; persist rotated values so the
     // next request reuses them. Failures here are non-fatal (the in-memory
     // client still works for this request) — log and continue.
@@ -186,7 +186,7 @@ export class GoogleOAuthTokenManager {
 
   /**
    * Persist rotated tokens emitted by the OAuth2 client's `tokens` event.
-   * AIDEV-NOTE: Never logs token values — only that persistence failed.
+   * Note: Never logs token values — only that persistence failed.
    */
   private async persistRefreshedTokens(
     recordId: string,

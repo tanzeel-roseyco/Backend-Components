@@ -50,7 +50,7 @@ Usage
     # Or use the session directly — it has retries baked in:
     r = session.get(url, params=params, timeout=(5, 20))
 
-AIDEV-NOTE: Adapted and generalized from a production codebase where a
+Note: Adapted and generalized from a production codebase where a
 bare Session blocked ~30s per DNS lookup and then looped on `time.sleep(5)` with
 no log line, so one network hiccup read as a multi-minute hang. Ordering/security
 constraints: (1) connect timeout MUST stay short — that is where DNS blocking
@@ -206,7 +206,7 @@ def make_session(
 
     headers: dict[str, str] = {"User-Agent": user_agent}
     if api_key:
-        # AIDEV-NOTE: key comes from the caller (env-resolved) — never a literal.
+        # Note: key comes from the caller (env-resolved) — never a literal.
         headers[api_key_header] = api_key
     s.headers.update(headers)
 
@@ -261,7 +261,7 @@ class CircuitBreaker:
     def wait_if_open(self) -> None:
         """Block for the remaining cool-off if the breaker is open, then half-open.
 
-        AIDEV-NOTE: This transitions OPEN -> HALF-OPEN by clearing `_opened_at`
+        Note: This transitions OPEN -> HALF-OPEN by clearing `_opened_at`
         and letting the next request through. The next `record_success` fully
         closes the breaker; the next `record_failure` re-opens it (fail count is
         NOT reset here, so a still-dead network re-opens immediately).

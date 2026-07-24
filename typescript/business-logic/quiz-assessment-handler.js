@@ -34,7 +34,7 @@
  *   @supabase/supabase-js   — persistence
  *   global fetch            — Kit v4 REST calls (Node 18+ / edge runtime)
  *
- * AIDEV-NOTE: Role = quiz intake pipeline edge function. Ordering & security constraints:
+ * Note: Role = quiz intake pipeline edge function. Ordering & security constraints:
  *   - The Kit tag is ALWAYS constructed server-side from validated `niche`/`tier`; never accept a
  *     client-supplied tag (prevents tag-injection into the ESP).
  *   - Storage runs BEFORE email/ESP so a submission is never silently lost if a downstream provider
@@ -48,7 +48,7 @@
 
 'use strict';
 
-// AIDEV-NOTE: Providers are optional at module scope so the handler degrades gracefully when a
+// Note: Providers are optional at module scope so the handler degrades gracefully when a
 // given integration is not configured (e.g. preview deploys without live keys).
 const { Resend } = require('resend');
 const { createClient } = require('@supabase/supabase-js');
@@ -67,7 +67,7 @@ const TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'user@example.com';
 
 const KIT_API_BASE = 'https://api.kit.com/v4';
 
-// AIDEV-NOTE: Tier labels map the numeric severity tier to human copy used in email subjects/bodies.
+// Note: Tier labels map the numeric severity tier to human copy used in email subjects/bodies.
 // Kept as a lookup (not nested conditionals) so adding tiers is a one-line change.
 /** @type {Readonly<Record<number, string>>} */
 const TIER_NAMES = Object.freeze({ 1: 'Mild', 2: 'Moderate', 3: 'Significant' });
@@ -108,7 +108,7 @@ const jsonResponse = (statusCode, payload) => ({
 
 /**
  * Normalize an arbitrary string into a lowercase, hyphen-delimited slug.
- * AIDEV-NOTE: `niche` is client-supplied and flows into the ESP tag name; slugifying here is what
+ * Note: `niche` is client-supplied and flows into the ESP tag name; slugifying here is what
  * actually makes the tag "server-controlled" (the header's claim). Prevents spaces/punctuation/
  * unicode in a submitted niche from producing a malformed or injected ESP tag.
  * @param {unknown} value
@@ -147,7 +147,7 @@ const buildTierTag = (niche, tier) => `quiz-${slugify(niche)}-tier-${tier}`;
  * @returns {string}
  */
 const renderResultEmail = (firstName, tierName) => {
-  // AIDEV-NOTE: Inline styles (not a stylesheet) because most email clients strip <style>/external CSS.
+  // Note: Inline styles (not a stylesheet) because most email clients strip <style>/external CSS.
   const phoneLine = CONTACT_PHONE
     ? `<p style="color: #6B7280; font-size: 14px; margin-top: 24px;">Questions before we speak? Reply to this email or call ${escapeHtml(CONTACT_PHONE)}.</p>`
     : '';
@@ -201,7 +201,7 @@ const renderAdminEmail = ({
 
 /**
  * Minimal HTML-entity escaper for user-supplied values interpolated into email markup.
- * AIDEV-NOTE: Submissions are untrusted external input; escape before embedding in HTML to avoid
+ * Note: Submissions are untrusted external input; escape before embedding in HTML to avoid
  * broken markup / injected content in the practice inbox. Not a full sanitizer — sufficient for
  * text nodes and attribute values used here.
  * @param {unknown} value
@@ -247,7 +247,7 @@ async function storeSubmission(data, kitTag) {
   if (!supabase) return;
 
   try {
-    // AIDEV-NOTE: consent_* columns capture GDPR special-category (health) consent — persisted
+    // Note: consent_* columns capture GDPR special-category (health) consent — persisted
     // verbatim for auditability. `status`/`source` support downstream triage of leads.
     await supabase.from('quiz_responses').insert({
       name: data.name,

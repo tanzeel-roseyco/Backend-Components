@@ -19,7 +19,7 @@
  *
  * Key dependencies: none (zero runtime dependencies; Node/JS stdlib only).
  *
- * AIDEV-NOTE: Adapted and generalized from an internal production codebase
+ * Note: Adapted and generalized from an internal production codebase
  * (a Netlify contact-form function). Only the generic, reusable helpers were
  * lifted out; the form/email/DB logic was intentionally dropped. SECURITY: any
  * user-supplied value interpolated into an HTML string MUST go through
@@ -82,7 +82,7 @@ const getHeader = (event, name) => {
 /**
  * Best-effort client IP extraction from common proxy/CDN headers.
  *
- * AIDEV-NOTE: Order is deliberate — platform-specific single-IP headers are
+ * Note: Order is deliberate — platform-specific single-IP headers are
  * trusted before `x-forwarded-for`, whose leftmost entry is the original
  * client but is client-spoofable when no trusted proxy overwrites it. Do NOT
  * use the returned IP for authorization decisions without a trusted proxy in

@@ -37,7 +37,7 @@ Key dependencies
     caller may substitute a faster / vendored implementation as long as it
     matches the documented signatures (see ``IndicatorSuite`` docstrings).
 
-AIDEV-NOTE: Adapted and generalized from a production trading codebase. Role:
+Note: Adapted and generalized from a production trading codebase. Role:
 this is the *single source of truth* for signal definitions — higher-level
 scanners must call these, never re-implement a signal, so a signal's meaning
 stays identical across every strategy. Ordering constraint: signals read the
@@ -56,7 +56,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-# AIDEV-NOTE: Original source imported these from an internal `indicators`
+# Note: Original source imported these from an internal `indicators`
 # module. For a self-contained public component, standard reference
 # implementations are inlined in the "REFERENCE INDICATORS" section below.
 # To swap in your own optimized versions, delete that section and restore:
@@ -115,7 +115,7 @@ def _enough_bars(df: Optional[pd.DataFrame], n: int) -> bool:
 # ═════════════════════════════════════════════════════════════════════════════
 # REFERENCE INDICATORS
 # ═════════════════════════════════════════════════════════════════════════════
-# AIDEV-NOTE: Standard, dependency-light implementations of the indicators the
+# Note: Standard, dependency-light implementations of the indicators the
 # signals rely on. They intentionally use Wilder-style smoothing (ewm alpha=1/n)
 # for RSI/ATR/ADX to match common TA conventions. Callers may replace these
 # wholesale — every signal only depends on the documented return shapes below.
@@ -1674,7 +1674,7 @@ def sig_bear_failed_breakout(
 # ═════════════════════════════════════════════════════════════════════════════
 # PERP-SPECIFIC SIGNALS  — for perpetual-futures positioning data
 # ═════════════════════════════════════════════════════════════════════════════
-# AIDEV-NOTE: These take plain scalars (open interest, funding rate, turnover)
+# Note: These take plain scalars (open interest, funding rate, turnover)
 # rather than a DataFrame — feed them values already pulled from your perp/
 # derivatives data source at the fetch boundary.
 
@@ -1765,7 +1765,7 @@ def sig_vol_oi_surge(
 # ═════════════════════════════════════════════════════════════════════════════
 # SIGNAL REGISTRY  — for introspection / programmatic dispatch
 # ═════════════════════════════════════════════════════════════════════════════
-# AIDEV-NOTE: Only the df-based signals share the (df, **params) shape. The RS
+# Note: Only the df-based signals share the (df, **params) shape. The RS
 # family takes (token_closes, btc_closes, ...) and the perp family takes plain
 # scalars — a generic dispatcher must special-case those groups (see comments).
 

@@ -1,10 +1,16 @@
 # Backend Components Library
 
+> **Current implementation batch:** standardised public-form spam assessment,
+> diagnostic secret redaction, and storage-agnostic workflow leases are being added
+> from the consolidated ElevateoCo and TeamRoseyCo reuse inventory. See
+> [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) for source provenance and
+> verification state.
+
 A comprehensive, production-ready monorepo of reusable backend components extracted and standardized from 32 TeamRoseyCo repositories. Built for a custom software development agency with 5 engineers working across multiple projects.
 
 **Status:** ✅ Production Ready | 🔐 Secure by default | 📦 Multi-language support
 
-> **Current state (v1.1.0):** 42 component files shipped across TypeScript/Node (33),
+> **Current state (v1.1.0):** 46 component files shipped across TypeScript/Node (36),
 > Python (9), and Go (1). 31 of these were **borrowed from real production codebases**
 > (`autoscheduler`, a market-scanner, and a client web project), then generalized —
 > every secret replaced with an env var, all client/personal identity scrubbed,

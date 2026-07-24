@@ -19,7 +19,7 @@
  * Key dependencies:
  *   - @supabase/supabase-js  (createClient)
  *
- * AIDEV-NOTE: Security-critical. Two constraints must never be relaxed:
+ * Note: Security-critical. Two constraints must never be relaxed:
  *   1. Single-field updates go through ALLOWED_FIELDS whitelisting so a caller
  *      can never write arbitrary columns (e.g. `status`, `id`) via `field`.
  *      This prevents column-injection / privilege escalation through the API.
@@ -28,7 +28,7 @@
  * The service-role key bypasses row-level security, so this module IS the
  * authorization boundary — do not add write paths that skip the whitelist.
  *
- * AIDEV-NOTE: Handlers are pure request->response; the only shared state is the
+ * Note: Handlers are pure request->response; the only shared state is the
  * lazily-built Supabase client. `getSupabaseClient()` returns null when env is
  * unconfigured so callers fail loud with a 500 rather than throwing on import.
  */
@@ -84,7 +84,7 @@ const JSON_HEADERS = Object.freeze({ 'Content-Type': 'application/json' });
 /**
  * Build a Supabase client from the environment, or null if unconfigured.
  *
- * AIDEV-NOTE: autoRefreshToken/persistSession disabled — this is a stateless
+ * Note: autoRefreshToken/persistSession disabled — this is a stateless
  * server context with no session to persist; leaving them on leaks timers.
  *
  * @returns {SupabaseClient | null} Client, or null when env vars are missing.
@@ -193,7 +193,7 @@ const update = async (event) => {
     if (!id || !field || typeof field !== 'string') {
       return jsonResponse(400, { error: 'id and field are required' });
     }
-    // AIDEV-NOTE: Whitelist check is the injection guard — reject any column
+    // Note: Whitelist check is the injection guard — reject any column
     // not explicitly allowed before it ever reaches the query builder.
     if (!ALLOWED_FIELDS.includes(field)) {
       return jsonResponse(400, {

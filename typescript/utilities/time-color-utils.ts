@@ -19,7 +19,7 @@
  *
  * Key dependencies: none (relies only on the standard `Date` / `Intl` APIs).
  *
- * AIDEV-NOTE: Presentation-layer utilities only — no secrets, no I/O, no
+ * Note: Presentation-layer utilities only — no secrets, no I/O, no
  * network. `getColorClasses` returns Tailwind class strings, so the consuming
  * app must have the corresponding classes present at build time (Tailwind's
  * JIT purge cannot see dynamically-built names — safelist them if generated at
@@ -66,7 +66,7 @@ export function formatDuration(minutes: number): string {
 /**
  * Parse an "HH:MM" time string into its numeric hour and minute components.
  *
- * AIDEV-NOTE: This mirrors the original implementation and does NOT validate
+ * Note: This mirrors the original implementation and does NOT validate
  * the input. Malformed strings (missing colon, non-numeric parts) yield `NaN`
  * components. Validate at the call site if the input is untrusted.
  *
@@ -99,7 +99,7 @@ export const DEFAULT_COLOR_CLASSES: Readonly<Record<string, ColorClasses>> = {
 /**
  * Map a semantic category to a color name via a caller-supplied lookup.
  *
- * AIDEV-NOTE: Generalized from a hardcoded scheduler-specific switch (which
+ * Note: Generalized from a hardcoded scheduler-specific switch (which
  * mapped internal "energy type" categories to colors). The mapping is now an
  * injected parameter so any project can define its own category vocabulary.
  *
@@ -148,7 +148,7 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
 /**
  * Format a `Date` as a "YYYY-MM-DD" string suitable for `<input type="date">`.
  *
- * AIDEV-NOTE: Uses `toISOString()`, so the result is in UTC. A local-time date
+ * Note: Uses `toISOString()`, so the result is in UTC. A local-time date
  * near midnight can therefore land on the adjacent calendar day. Convert to the
  * desired timezone before calling if that matters for the use case.
  *

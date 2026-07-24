@@ -53,4 +53,4 @@ if not result.allowed:
 ## Conventions
 - Full type hints (mypy-friendly)
 - Secrets only via `os.getenv` / `os.environ`
-- Docstrings on public functions; `AIDEV-NOTE` anchors on non-obvious logic
+- Docstrings on public functions; `NOTE` anchors on non-obvious logic

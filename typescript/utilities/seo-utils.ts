@@ -16,20 +16,20 @@
  *
  * Key dependencies: none (pure standard library / platform globals only).
  *
- * AIDEV-NOTE: Adapted and generalized from a production codebase. Originally this
+ * Note: Adapted and generalized from a production codebase. Originally this
  *   split logic across a `seo.ts` module and a `config/site.ts` module with a hardcoded
  *   production origin, brand name, and image paths; those have been inlined here and
  *   generalized into env vars + a `SiteConfig` options object so the module is self-contained
  *   and carries no client/personal identity.
- * AIDEV-NOTE: Ordering constraint — the site origin must be resolved (env → default) BEFORE
+ * Note: Ordering constraint — the site origin must be resolved (env → default) BEFORE
  *   any absolute/canonical/image URL is built; `absoluteUrl` returns already-absolute inputs
  *   unchanged so external image/social URLs pass through without being re-prefixed.
- * AIDEV-NOTE: Security — never interpolate untrusted, unvalidated strings into `origin`.
+ * Note: Security — never interpolate untrusted, unvalidated strings into `origin`.
  *   The origin should come only from trusted env/config; user-supplied paths are normalized
  *   but not otherwise sanitized for injection into HTML (escape at the render layer).
  */
 
-// AIDEV-NOTE: Original imports (internal, not included in this public copy):
+// Note: Original imports (internal, not included in this public copy):
 //   import { SITE, SITE_ORIGIN } from '../config/site';
 // The config module's behavior is inlined below via `resolveSiteOrigin` + `SITE`.
 
@@ -76,7 +76,7 @@ export const normalizePath = (path: string = '/'): string => {
   if (!path || path === '/') return '/';
   const withLeadingSlash = path.startsWith('/') ? path : `/${path}`;
   // Collapse duplicate slashes (e.g. from naive path joins) into a single slash.
-  // AIDEV-NOTE: This collapses ALL "//" runs anywhere in the string, so it must only
+  // Note: This collapses ALL "//" runs anywhere in the string, so it must only
   //   receive bare paths — a query string carrying a URL (e.g. "/r?to=https://x")
   //   would be corrupted to "https:/x". Pass such values through absoluteUrl's
   //   isAbsoluteHttpUrl guard, or build them after normalization, not before.
@@ -92,7 +92,7 @@ export const normalizePath = (path: string = '/'): string => {
  * @returns The origin with any trailing slashes stripped.
  */
 export const resolveSiteOrigin = (fallbackOrigin: string = 'https://example.com'): string => {
-  // AIDEV-NOTE: `import.meta` access is guarded so this module also works under
+  // Note: `import.meta` access is guarded so this module also works under
   //   plain Node/CommonJS transpilation where `import.meta.env` is undefined.
   const viteEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
   const runtime = globalThis as typeof globalThis & {

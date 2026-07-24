@@ -24,7 +24,7 @@
  *   - `localStorage` (browser only) for persisting the user offset and the
  *     sync cache timestamp; all localStorage access is guarded.
  *
- * AIDEV-NOTE: Extracted and generalized from a production codebase.
+ * Note: Extracted and generalized from a production codebase.
  *   Role: shared, framework-free calendar utility for scheduling/UI features.
  *   Constraints: (1) Islamic days start at sunset, so "night of the Nth"
  *   logic in isLaylatulQadr intentionally inspects the NEXT Gregorian day.
@@ -34,7 +34,7 @@
  *   so the module is safe to import in SSR / server contexts.
  */
 
-// AIDEV-NOTE: Structured Hijri date. `month` is 1-12; 0 signals a failed
+// Note: Structured Hijri date. `month` is 1-12; 0 signals a failed
 // conversion (caller should treat monthName === "" / month === 0 as "unknown").
 export interface HijriDate {
   day: number;
@@ -64,7 +64,7 @@ export function getHijriOffset(): number {
   return parseInt(localStorage.getItem(OFFSET_STORAGE_KEY) || "0", 10) || 0;
 }
 
-// AIDEV-NOTE: Broad alias map — Intl month strings vary by ICU version and
+// Note: Broad alias map — Intl month strings vary by ICU version and
 // transliteration (apostrophes, diacritics). Keys are lowercased + NFKD.
 const HIJRI_MONTHS: Record<string, number> = {
   muharram: 1,
@@ -235,7 +235,7 @@ function toHijriRaw(date: Date): HijriDate {
  */
 export function toHijri(date: Date): HijriDate {
   // Apply user offset for regional moon-sighting differences, then delegate to
-  // the shared converter. AIDEV-NOTE: conversion logic lives ONLY in toHijriRaw
+  // the shared converter. Note: conversion logic lives ONLY in toHijriRaw
   // to avoid drift — do not inline the Intl formatting block here again.
   const offset = getHijriOffset();
   const adjusted = offset !== 0 ? new Date(date.getTime() + offset * MS_PER_DAY) : date;
@@ -253,7 +253,7 @@ export function isRamadan(date: Date): boolean {
 /**
  * Whether this date's evening is a potential Laylatul Qadr night.
  *
- * AIDEV-NOTE: The Islamic day begins at sunset, so "the night of the 21st"
+ * Note: The Islamic day begins at sunset, so "the night of the 21st"
  * begins on the Gregorian evening of Ramadan 20th. We therefore inspect the
  * NEXT Islamic day and check the odd nights (21, 23, 25, 27, 29).
  *
@@ -428,7 +428,7 @@ export function getMoonPhase(date: Date): MoonPhaseInfo {
   // Phase from mean elongation (0 = new, 0.5 = full).
   const normalizedPhase = Dnorm / 360;
 
-  // AIDEV-NOTE: Cardinal phases (New/Quarter/Full) get narrow ~22° bands while
+  // Note: Cardinal phases (New/Quarter/Full) get narrow ~22° bands while
   // intermediate phases (Crescent/Gibbous) span wider ranges — matching how
   // astronomy apps present "First Quarter" as a moment rather than a wide span.
   let name: string;

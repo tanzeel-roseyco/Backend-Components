@@ -56,7 +56,7 @@ KEY DEPENDENCIES
   pandas, requests, urllib3 (urllib3 ships with requests)
 
 --------------------------------------------------------------------------------
-AIDEV-NOTE: Role & constraints
+Note: Role & constraints
   This module is the single ingestion boundary for all downstream analytics —
   it owns the ONE shared cache and the ONE HTTP retry/backoff policy so callers
   never talk to exchanges directly. Import-safe: no network calls on import
@@ -155,7 +155,7 @@ STABLECOINS_AND_WRAPPED: frozenset[str] = frozenset({
 # ─────────────────────────────────────────────────────────────────────────────
 # HTTP SESSION FACTORY + CIRCUIT BREAKER
 #
-# AIDEV-NOTE: Inlined from an internal `http_client` helper in the source
+# Note: Inlined from an internal `http_client` helper in the source
 # codebase to keep this module self-contained. Original import was:
 #     from http_client import make_session, CircuitBreaker
 # make_session() installs a urllib3 Retry adapter that retries connect errors
@@ -203,7 +203,7 @@ class CircuitBreaker:
     calls for ``cooloff_s`` seconds instead of hammering a dead endpoint. A single
     success (or the cool-off elapsing) closes it again.
 
-    AIDEV-NOTE: Provided as a reusable guard for callers that want to wrap batch
+    Note: Provided as a reusable guard for callers that want to wrap batch
     fetch loops (e.g. "stop after N dead-network failures, pause once, resume").
     Kept faithful to the source's public shape; the per-request Retry adapter in
     make_session already handles single-request transience.

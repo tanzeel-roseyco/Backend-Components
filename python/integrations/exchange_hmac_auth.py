@@ -25,7 +25,7 @@ Key dependencies
   requests   HTTP client (external). Swap for httpx/urllib if preferred.
   hmac/hashlib/time  stdlib — signing + timestamps.
 
-AIDEV-NOTE: Adapted and generalized from a production codebase.
+Note: Adapted and generalized from a production codebase.
 Role: transport-layer auth for signed exchange requests. Security/ordering
 constraints that MUST hold for a valid signature:
   1. The signed payload string is order-sensitive:
@@ -49,7 +49,7 @@ import os
 import time
 from typing import Optional
 
-import requests  # AIDEV-NOTE: only external dep; isolates HTTP so core signing stays pure.
+import requests  # Note: only external dep; isolates HTTP so core signing stays pure.
 
 log = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ def _parse_float(value: object) -> Optional[float]:
     """
     Parse a numeric field from an API envelope into a float.
 
-    AIDEV-NOTE: Bybit returns "" (empty string), not 0, for balance fields a coin
+    Note: Bybit returns "" (empty string), not 0, for balance fields a coin
     has no position in — and occasionally None. Bare float("") / float(None)
     raises, so every external numeric field must go through here. Returns None on
     any unparseable input rather than crashing the caller.
@@ -149,7 +149,7 @@ class SignedRequestClient:
         """
         Build Bybit v5 HMAC-SHA256 signed headers for a given request.
 
-        AIDEV-NOTE: Payload concatenation order is fixed by the exchange spec —
+        Note: Payload concatenation order is fixed by the exchange spec —
         `timestamp + api_key + recv_window + params`. `params` must be the exact
         query string (for GET) or raw JSON body (for POST) sent on the wire.
 
@@ -195,7 +195,7 @@ class SignedRequestClient:
             url = f"{url}?{query}"
 
         for attempt in range(self.max_retries):
-            # AIDEV-NOTE: Re-sign on EVERY attempt. The signature is bound to a
+            # Note: Re-sign on EVERY attempt. The signature is bound to a
             # millisecond timestamp that must land within recv_window of the
             # server clock; reusing one signature across backoff sleeps
             # (up to 2**attempt s) would push later retries outside the window
@@ -230,7 +230,7 @@ class SignedRequestClient:
                 if not is_last:
                     time.sleep(2 ** attempt)
             except requests.exceptions.RequestException as e:
-                # AIDEV-NOTE: catch transport errors only; JSON/logic errors above
+                # Note: catch transport errors only; JSON/logic errors above
                 # are handled via retCode so we don't mask programming bugs here.
                 log.warning("Signed GET request exception: %s (attempt %d)", e, attempt + 1)
                 if not is_last:
@@ -302,7 +302,7 @@ class SignedRequestClient:
 
 
 # ── Module-level convenience wrappers (backwards-compatible functional API) ──
-# AIDEV-NOTE: these mirror the original free-function interface so existing
+# Note: these mirror the original free-function interface so existing
 # call sites keep working; each builds a throwaway env-configured client.
 
 def fetch_live_balance(coin: str = "USDT") -> Optional[float]:

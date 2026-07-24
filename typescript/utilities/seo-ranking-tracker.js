@@ -30,7 +30,7 @@
  *   googleapis            - Google Search Console (webmasters v3) client.
  *   @netlify/functions    - `schedule()` wrapper (only for the Netlify entrypoint).
  *
- * AIDEV-NOTE: Adapted and generalized from a production codebase.
+ * Note: Adapted and generalized from a production codebase.
  * Role: nightly SEO metrics ingestion. Security/ordering constraints:
  *   - SUPABASE_SERVICE_ROLE_KEY grants full DB access — server-side ONLY, never
  *     ship to a client bundle.
@@ -42,7 +42,7 @@
 
 'use strict';
 
-// AIDEV-NOTE: Deps are the true external boundaries; require lazily is not
+// Note: Deps are the true external boundaries; require lazily is not
 // needed here since both are used on every invocation.
 const { createClient } = require('@supabase/supabase-js');
 const { google } = require('googleapis');
@@ -134,7 +134,7 @@ async function batchUpsert(supabase, table, records, opts = {}) {
     const { error } = await supabase.from(table).upsert(batch, { onConflict });
 
     if (error) {
-      // AIDEV-NOTE: Isolate per-batch failures — log and continue so one bad
+      // Note: Isolate per-batch failures — log and continue so one bad
       // batch does not discard the rows that did succeed.
       logger.error(`Batch ${Math.floor(i / batchSize) + 1} error:`, error.message);
     } else {
@@ -180,14 +180,14 @@ async function runRankingSync(options = {}) {
   const authClient = await auth.getClient();
   const gsc = google.webmasters({ version: 'v3', auth: authClient });
 
-  // AIDEV-NOTE: GSC data lags ~2-3 days; window ends `lagDays` back on purpose.
+  // Note: GSC data lags ~2-3 days; window ends `lagDays` back on purpose.
   const endDate = toIsoDate(new Date(Date.now() - lagDays * MS_PER_DAY));
   const startDate = toIsoDate(new Date(Date.now() - (windowDays + lagDays) * MS_PER_DAY));
   const today = toIsoDate(new Date());
 
   logger.log(`Fetching GSC data: ${startDate} -> ${endDate}`);
 
-  // AIDEV-NOTE: Single request, no pagination. GSC caps rowLimit at 25000; if a
+  // Note: Single request, no pagination. GSC caps rowLimit at 25000; if a
   // property exceeds that in the window, extra rows are silently dropped. Add a
   // startRow paging loop here if that ceiling is ever hit.
   const response = await gsc.searchanalytics.query({
@@ -229,7 +229,7 @@ async function runRankingSync(options = {}) {
 
   const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-  // AIDEV-NOTE: onConflict columns MUST match the table's unique constraint,
+  // Note: onConflict columns MUST match the table's unique constraint,
   // or upserts insert duplicates instead of updating.
   const stored = await batchUpsert(supabase, 'ranking_history', records, {
     onConflict: 'page_url,target_keyword,date,device,country',
@@ -257,7 +257,7 @@ async function handler(_event) {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error('Track rankings failed:', message);
-    // AIDEV-NOTE: This runs on a scheduler (no HTTP caller), so every failure —
+    // Note: This runs on a scheduler (no HTTP caller), so every failure —
     // missing env, GSC auth, or Supabase — is a server-side 500. If ever fronted
     // by a real client, split config errors (missing env / bad key) into a 4xx.
     return { statusCode: 500, body: JSON.stringify({ success: false, error: message }) };
@@ -265,7 +265,7 @@ async function handler(_event) {
 }
 
 // --- Netlify Scheduled Function entrypoint ---------------------------------
-// AIDEV-NOTE: `schedule()` is only needed for the Netlify runtime. Guarded so
+// Note: `schedule()` is only needed for the Netlify runtime. Guarded so
 // importing this module elsewhere (tests, other schedulers) doesn't require
 // @netlify/functions to be installed.
 let scheduledHandler = handler;

@@ -51,7 +51,7 @@ CLI usage
   python trade_journal.py delete --id 5 --confirm
 ================================================================================
 
-AIDEV-NOTE: Adapted and generalized from a production codebase. Role:
+Note: Adapted and generalized from a production codebase. Role:
 single source of truth for realised trade performance. Two security/ordering
 constraints matter here: (1) all free-text fields written to CSV are passed
 through `_sanitize_csv` to neutralise spreadsheet formula injection (=,+,-,@)
@@ -96,7 +96,7 @@ def _resolve_journal_file() -> Path:
 def _account_start() -> float:
     """Starting capital (equity-curve base) from env, defaulting to 10000.0.
 
-    AIDEV-NOTE: account_start is a denominator for total-return% and drawdown%.
+    Note: account_start is a denominator for total-return% and drawdown%.
     A zero/negative base (e.g. TRADE_JOURNAL_ACCOUNT_START=0) would raise
     ZeroDivisionError in cmd_stats — so reject non-positive values at this
     boundary and fall back to the default.
@@ -170,7 +170,7 @@ def _sanitize_csv(value: str) -> str:
     Prevent CSV/spreadsheet formula injection by prefixing a single quote to
     any value that begins with a formula-trigger character.
 
-    AIDEV-NOTE: security-critical. Must run on every user-supplied free-text
+    Note: security-critical. Must run on every user-supplied free-text
     field (signals, notes) before it is persisted.
     """
     if value and value[0] in ("=", "+", "-", "@", "\t", "\r"):
@@ -198,7 +198,7 @@ def get_today_pnl() -> float:
     halts new entries once a max daily-loss threshold is breached). Returns
     0.0 if no trades exist or the journal file is missing.
 
-    AIDEV-NOTE: expected interface for the omitted orchestrator dependency —
+    Note: expected interface for the omitted orchestrator dependency —
     the circuit breaker calls this and compares the result against its own
     configured daily-loss limit (commonly a negative % of account equity).
     """
@@ -286,7 +286,7 @@ def cmd_close(args: argparse.Namespace) -> None:
     reason = args.reason.lower()
 
     # P&L = price move × quantity, where qty is derived from position notional.
-    # AIDEV-NOTE: long-only P&L. The origin codebase's direction/`short` enum was
+    # Note: long-only P&L. The origin codebase's direction/`short` enum was
     # dropped during generalisation, so shorts would report an inverted sign.
     # Add a `direction` field + `(entry - exit)` branch before using for shorts.
     if entry > 0 and pos > 0:
@@ -341,7 +341,7 @@ def cmd_list(args: argparse.Namespace) -> None:
         pnl_raw = _float(r["pnl_usdt"], None)  # type: ignore[arg-type]
         r_raw = _float(r["r_multiple"], None)  # type: ignore[arg-type]
 
-        # AIDEV-NOTE: test `is None`, not truthiness — a closed breakeven trade
+        # Note: test `is None`, not truthiness — a closed breakeven trade
         # has pnl/r == 0.0 (falsy) and must NOT be mislabelled "open"/"—".
         pnl_str = ("open" if pnl_raw is None
                    else f"+{pnl_raw:,.0f}" if pnl_raw >= 0
@@ -427,7 +427,7 @@ def cmd_stats(args: argparse.Namespace) -> None:
     ]
     pnl_vals = [_float(r["pnl_usdt"]) for r in closed]
 
-    # AIDEV-NOTE: win/loss classification keys off r_multiple. The original
+    # Note: win/loss classification keys off r_multiple. The original
     # source keyed off a non-existent 'pnl_pct' field, which silently made
     # win_rate/avg_win/avg_loss always 0 — fixed here to use realised R.
     win_r = [x for x in r_vals if x > 0]
@@ -620,7 +620,7 @@ def build_parser() -> argparse.ArgumentParser:
     # ── log ──────────────────────────────────────────────────────────────────
     p_log = sub.add_parser("log", help="Log a new trade")
     p_log.add_argument("--symbol", required=True, help="Instrument symbol, e.g. SUI")
-    # AIDEV-NOTE: `source` is free-text (was a fixed scanner enum in the origin
+    # Note: `source` is free-text (was a fixed scanner enum in the origin
     # codebase). Kept open so the component works for any strategy/signal source.
     p_log.add_argument("--source", required=True, help="Signal source / strategy name")
     p_log.add_argument("--entry", type=float, required=True, help="Entry price")

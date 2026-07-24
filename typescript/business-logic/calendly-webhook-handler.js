@@ -33,7 +33,7 @@
  *   - @supabase/supabase-js: booking persistence (optional — no-op if not configured).
  *   - resend: default transactional email adapter (optional — no-op if not configured).
  *
- * AIDEV-NOTE: Adapted and generalized from a production codebase.
+ * Note: Adapted and generalized from a production codebase.
  *   Security & ordering constraints, do not reorder casually:
  *   1. Signature verification MUST run and pass BEFORE the body is parsed/trusted.
  *   2. Persistence, nurture-suppression, and email are all best-effort AFTER a verified
@@ -48,7 +48,7 @@
 
 const crypto = require('crypto');
 
-// AIDEV-NOTE: Vendor SDKs are optional at runtime. We require lazily / guard on presence
+// Note: Vendor SDKs are optional at runtime. We require lazily / guard on presence
 // so the module can be unit-tested and reused without every provider installed.
 // Original private imports were direct top-level requires; kept optional here.
 let Resend;
@@ -133,11 +133,11 @@ try {
 /**
  * Verify a Calendly webhook signature using HMAC-SHA256 (base64), constant-time compared.
  *
- * AIDEV-NOTE: When no secret is configured this returns true (skip verification) — a
+ * Note: When no secret is configured this returns true (skip verification) — a
  * deliberate dev escape hatch. Never rely on that in production. Comparison uses
  * timingSafeEqual to avoid leaking the secret via response-timing side channels.
  *
- * AIDEV-NOTE (security fix): A configured secret with a MISSING signature must FAIL,
+ * NOTE (security fix): A configured secret with a MISSING signature must FAIL,
  * not skip. The previous `!secret || !signature` short-circuit let an attacker bypass
  * verification entirely by simply omitting the signature header while a secret was set.
  *
@@ -189,7 +189,7 @@ function toBookingRecord(eventPayload) {
 /**
  * Escape a value for safe interpolation into HTML.
  *
- * AIDEV-NOTE: Invitee-controlled fields (name, email, phone, UTM params) flow straight
+ * Note: Invitee-controlled fields (name, email, phone, UTM params) flow straight
  * from the webhook into notification email HTML. Without escaping, a crafted invitee
  * name could inject markup/script into the admin's inbox. Escape at every interpolation.
  *
@@ -292,7 +292,7 @@ function buildDefaultEmailSender() {
  * sequences once they have booked. If the subscriber is unknown (booked without ever
  * entering the funnel) it silently no-ops.
  *
- * AIDEV-NOTE: Generalized from a specific vendor. The REST shape (v4 subscribers/tags,
+ * Note: Generalized from a specific vendor. The REST shape (v4 subscribers/tags,
  * Bearer auth) matches Kit/ConvertKit-style APIs; point NURTURE_API_BASE_URL at your
  * provider. Errors are non-fatal by contract — booking side effects must never be
  * blocked by a marketing-tool outage.
@@ -419,7 +419,7 @@ async function handleInviteeCreated(eventPayload, config) {
 async function handleInviteeCanceled(eventPayload, config) {
   const invitee = eventPayload.invitee || {};
   const cancellation = eventPayload.cancellation || {};
-  // AIDEV-NOTE: URI precedence MUST match toBookingRecord's calendly_event_id
+  // Note: URI precedence MUST match toBookingRecord's calendly_event_id
   // (event.uri first, invitee.uri fallback). If these disagree, the cancel UPDATE
   // matches zero rows and the booking is silently never marked cancelled.
   const eventUri = (eventPayload.event && eventPayload.event.uri) || invitee.uri || null;
@@ -485,7 +485,7 @@ function createHandler(overrides = {}) {
       const payload = event.body;
       const signature = (event.headers && event.headers['calendly-webhook-signature']) || '';
 
-      // AIDEV-NOTE: Verify BEFORE parsing/trusting the body. HMAC is computed over the raw
+      // Note: Verify BEFORE parsing/trusting the body. HMAC is computed over the raw
       // body bytes, so `event.body` must be the untouched string Calendly signed.
       if (config.signingSecret && !verifyWebhookSignature(payload, signature, config.signingSecret)) {
         console.error('Invalid webhook signature');

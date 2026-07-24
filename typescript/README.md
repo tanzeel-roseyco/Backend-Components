@@ -83,4 +83,4 @@ if (!check.allowed) { /* return 429 */ }
 ## Conventions
 - TypeScript strict-friendly, no implicit `any`
 - Secrets only via `process.env`
-- JSDoc on exported functions; `AIDEV-NOTE` anchors on non-obvious logic
+- JSDoc on exported functions; `NOTE` anchors on non-obvious logic

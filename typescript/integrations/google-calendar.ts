@@ -14,7 +14,7 @@
  * Key dependencies:
  *   - googleapis (the `google` namespace: OAuth2 client + Calendar v3 client)
  *
- * AIDEV-NOTE: Role = the sole boundary between the app and the Google Calendar
+ * Note: Role = the sole boundary between the app and the Google Calendar
  * API. Security/ordering constraints:
  *   1. OAuth credentials come ONLY from env vars — never hardcode them.
  *   2. Token persistence is delegated to an injected `GoogleTokenStore` port so
@@ -27,14 +27,14 @@
  *      the scheduling logic stays unit-testable without network access.
  */
 
-// AIDEV-NOTE: `googleapis` is the real runtime dependency. `calendar_v3` is the
+// Note: `googleapis` is the real runtime dependency. `calendar_v3` is the
 // generated Calendar v3 typing namespace; `Auth.OAuth2Client` is the OAuth2 type.
 import { google, calendar_v3, Auth } from "googleapis";
 
 // ---------------------------------------------------------------------------
 // Local domain types
 // ---------------------------------------------------------------------------
-// AIDEV-NOTE: Inlined from the source project's shared `@/types` module so this
+// Note: Inlined from the source project's shared `@/types` module so this
 // integration is self-contained. Mirror these into your own type barrel if you
 // share them across the codebase.
 
@@ -44,7 +44,7 @@ export type EnergyType = "deep" | "light" | "admin" | "travel";
 // ---------------------------------------------------------------------------
 // Input guards
 // ---------------------------------------------------------------------------
-// AIDEV-NOTE: `date`/`workStartTime`/`workEndTime` are external inputs that get
+// Note: `date`/`workStartTime`/`workEndTime` are external inputs that get
 // interpolated into `Date` construction and sent to Google. An invalid string
 // otherwise yields an Invalid Date that silently propagates as NaN comparisons
 // (empty results) or a confusing Google API error, so validate at the boundary.
@@ -93,7 +93,7 @@ export interface BusySlot {
 // ---------------------------------------------------------------------------
 // Token storage port (dependency inversion)
 // ---------------------------------------------------------------------------
-// AIDEV-NOTE: The original codebase read/wrote OAuth tokens via a Prisma
+// Note: The original codebase read/wrote OAuth tokens via a Prisma
 // `account` table. That persistence detail is generalized into this port so
 // the integration depends on a stable interface, not a specific ORM.
 // Original import (kept for provenance, replaced by the port below):
@@ -168,7 +168,7 @@ export async function getGoogleCalendarClient(
     expiry_date: tokens.expiresAtSeconds ? tokens.expiresAtSeconds * 1000 : undefined,
   });
 
-  // AIDEV-NOTE: Attach the refresh listener BEFORE any refresh call so
+  // Note: Attach the refresh listener BEFORE any refresh call so
   // library-driven token rotation is always captured and persisted.
   oauth2Client.on("tokens", (rotated) => {
     const next: Partial<GoogleTokenSet> = {};
@@ -421,7 +421,7 @@ export function computeFreeSlots(
 
 /**
  * Append a free slot to `out` if it meets the minimum duration.
- * AIDEV-NOTE: Extracted to remove the four duplicated push blocks in the
+ * Note: Extracted to remove the four duplicated push blocks in the
  * original `computeFreeSlots`; keeps the min-duration rule in one place.
  */
 function pushSlot(
@@ -499,7 +499,7 @@ export async function createAllDayCalendarEvent(
   const calendar = await getGoogleCalendarClient(userId, store);
 
   // Google all-day events use an exclusive end date (the following day).
-  // AIDEV-NOTE: Compute the +1-day end entirely in UTC. Parsing local midnight
+  // Note: Compute the +1-day end entirely in UTC. Parsing local midnight
   // and then calling toISOString() shifts the date across the UTC boundary for
   // east-of-UTC servers (local midnight = previous calendar day in UTC), which
   // produced an off-by-one end date. Staying in UTC end-to-end keeps the

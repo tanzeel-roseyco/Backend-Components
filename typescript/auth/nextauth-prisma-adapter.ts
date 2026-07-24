@@ -21,14 +21,14 @@
  *                           (optional) "true" to link OAuth identities to an
  *                           existing user by matching email. Defaults to false;
  *                           enable only for providers with trusted email
- *                           verification (see AIDEV-NOTE below).
+ *                           verification (see NOTE below).
  *
  * Key dependencies:
  *   - next-auth (Auth.js v5)
  *   - @auth/prisma-adapter
  *   - A PrismaClient instance exposing `user`, `account`, and `session` models.
  *
- * AIDEV-NOTE: Adapted and generalized from a production codebase.
+ * Note: Adapted and generalized from a production codebase.
  *   Security/ordering constraints:
  *   - `safeSerialize` MUST stay circular-safe: it is fed arbitrary error
  *     payloads from the OAuth layer that can contain self-referential objects.
@@ -45,7 +45,7 @@ import type { Adapter, AdapterUser } from "next-auth/adapters";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
-// AIDEV-NOTE: Internal Prisma client is project-specific and therefore not
+// Note: Internal Prisma client is project-specific and therefore not
 // bundled here. Replace the import below with your own singleton client.
 // Original (internal) import:
 //   import { prisma } from "@/lib/prisma";
@@ -101,7 +101,7 @@ interface SessionRecord {
 // long-running desktop/background clients.
 const THIRTY_DAYS = 30 * 24 * 60 * 60;
 
-// AIDEV-NOTE: Provide your project's PrismaClient singleton here.
+// Note: Provide your project's PrismaClient singleton here.
 // Cast is intentional: the concrete client is a superset of AuthPrisma.
 declare const prisma: PrismaClient;
 const db = prisma as unknown as AuthPrisma;
@@ -164,7 +164,7 @@ function safeSerialize(value: unknown): string {
  * Custom adapter: spreads the base Prisma adapter and overrides the two lookups
  * that most benefit from explicit logging + guaranteed error propagation.
  *
- * AIDEV-NOTE: Overrides normalize `email` to "" because Auth.js's AdapterUser
+ * Note: Overrides normalize `email` to "" because Auth.js's AdapterUser
  * requires a string, while the DB column is nullable.
  */
 const adapter: Adapter = {
@@ -251,7 +251,7 @@ const authConfig: NextAuthConfig = {
     Google({
       clientId: process.env.OAUTH_CLIENT_ID,
       clientSecret: process.env.OAUTH_CLIENT_SECRET,
-      // AIDEV-NOTE: Linking an OAuth identity to an existing user by matching
+      // Note: Linking an OAuth identity to an existing user by matching
       // email can enable account takeover if the provider's email verification
       // is weak. Defaults to OFF and is opt-in via env so a reusable template
       // never ships the dangerous default silently. Enable only for providers
@@ -280,7 +280,7 @@ const authConfig: NextAuthConfig = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        // AIDEV-NOTE: MUST be true behind HTTPS. Left env-driven so local /
+        // Note: MUST be true behind HTTPS. Left env-driven so local /
         // non-TLS development still works. Never hardcode `false` in prod.
         secure: process.env.AUTH_COOKIE_SECURE === "true",
         maxAge: THIRTY_DAYS, // persist the cookie across client restarts
@@ -313,7 +313,7 @@ const authConfig: NextAuthConfig = {
       console.log("[AUTH DEBUG]", code, ...message);
     },
   },
-  // AIDEV-NOTE: Verbose auth debug logging. Disable (or gate on NODE_ENV) in
+  // Note: Verbose auth debug logging. Disable (or gate on NODE_ENV) in
   // production to avoid leaking internals into logs.
   debug: process.env.NODE_ENV !== "production",
 };

@@ -23,7 +23,7 @@
  *
  * Key dependencies: none (standard library only).
  *
- * AIDEV-NOTE: This is the deterministic core of a two-tier scheduler. It must
+ * Note: This is the deterministic core of a two-tier scheduler. It must
  * stay pure and side-effect-free so it can be unit-tested and reused as a
  * fallback. Ordering constraints that MUST be preserved for correct output:
  *   1. Tasks are sorted by priority, then earliest deadline, BEFORE placement.
@@ -66,7 +66,7 @@ export interface SchedulableTask {
 /**
  * A contiguous window of free time on the target day.
  *
- * AIDEV-NOTE: Originally imported as `FreeSlot` from an internal `@/types`
+ * Note: Originally imported as `FreeSlot` from an internal `@/types`
  * module. Inlined here so the component is self-contained.
  * // import type { FreeSlot } from "@/types";
  */
@@ -103,7 +103,7 @@ export interface SchedulerOptions {
   minChunkMinutes?: number;
   /**
    * Maximum number of chunks a split task may occupy. Defaults to 3.
-   * AIDEV-NOTE: The source code capped this at 3 even though its LLM prompt
+   * Note: The source code capped this at 3 even though its LLM prompt
    * mentioned 5; the deterministic path used 3, so 3 is preserved as default.
    */
   maxSplitChunks?: number;
@@ -147,7 +147,7 @@ const PRIORITY_ORDER: Record<string, number> = {
 
 /**
  * Parse an "HH:mm" 24-hour string into hours/minutes.
- * AIDEV-NOTE: Inlined from the original `parseTime` in `@/lib/utils`.
+ * Note: Inlined from the original `parseTime` in `@/lib/utils`.
  * Assumes well-formed input; validate at the boundary if untrusted.
  */
 function parseTime(value: string): { hours: number; minutes: number } {
@@ -347,7 +347,7 @@ export function scheduleTasks(
       // placed as a new chunk (chunks must be >= minChunkMs), but it is still
       // unscheduled work — silently dropping it would break the module's stated
       // contract that a task is only "scheduled" when its full duration fits.
-      // AIDEV-NOTE: All time math is integer milliseconds (minutes * 60000), so
+      // Note: All time math is integer milliseconds (minutes * 60000), so
       // a fully-placed task lands on remainingMs === 0 exactly — no float noise,
       // so `> 0` never produces a spurious unscheduled entry.
       if (remainingMs > 0) {

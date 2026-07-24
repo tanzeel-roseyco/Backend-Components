@@ -8,6 +8,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest",
+    "test:core": "rm -rf .test-dist && ./node_modules/.bin/tsc --strict --target ES2022 --module commonjs --moduleResolution node --outDir .test-dist utilities/spam-submission-guard.ts utilities/secret-redaction.ts infrastructure/workflow-lease.ts && node --test utilities/*.test.js infrastructure/*.test.js",
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""

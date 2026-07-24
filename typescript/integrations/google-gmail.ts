@@ -19,7 +19,7 @@
  *     this was a Prisma `account` table; here it is abstracted behind an interface
  *     so any persistence layer can be injected.
  *
- * AIDEV-NOTE: Role = read-only Gmail ingestion boundary. Ordering/security constraints:
+ * Note: Role = read-only Gmail ingestion boundary. Ordering/security constraints:
  *   1. Credentials are set on the OAuth2 client BEFORE any API call; the `tokens`
  *      listener is attached BEFORE `refreshAccessToken()` so refreshed tokens are
  *      always persisted (googleapis emits `tokens` on both manual and lazy refresh).
@@ -32,7 +32,7 @@
 
 import { google, type gmail_v1 } from "googleapis";
 
-// AIDEV-NOTE: Original code imported a concrete Prisma client:
+// Note: Original code imported a concrete Prisma client:
 //   import { prisma } from "@/lib/prisma";
 // That coupled this module to one persistence layer. It is replaced by the
 // injectable `OAuthTokenStore` interface below (dependency inversion). Provide a
@@ -117,7 +117,7 @@ export async function getGoogleGmailClient(
     expiry_date: account.expiresAt ? account.expiresAt * 1000 : undefined,
   });
 
-  // AIDEV-NOTE: Attach BEFORE any refresh so googleapis' lazy + manual refreshes
+  // Note: Attach BEFORE any refresh so googleapis' lazy + manual refreshes
   // both persist. A rotated refresh_token is only emitted once — losing it forces
   // full re-consent, so we always write whatever the event carries.
   oauth2Client.on("tokens", async (tokens) => {
@@ -196,7 +196,7 @@ export interface ListGmailMessagesOptions {
 
 /**
  * Format a Date as Gmail's `YYYY/MM/DD` filter token (local time).
- * AIDEV-NOTE: Gmail's `after:` uses date-only granularity in the account's
+ * Note: Gmail's `after:` uses date-only granularity in the account's
  * timezone; time-of-day is intentionally dropped.
  */
 function toGmailDate(d: Date): string {

@@ -19,7 +19,7 @@
  *   - @supabase/supabase-js (auth session + sign-out)
  *   - Tailwind CSS utility classes for the loading state (styling only).
  *
- * AIDEV-NOTE: Adapted and generalized from a production codebase.
+ * Note: Adapted and generalized from a production codebase.
  * Security/ordering constraints:
  *   - The admin check MUST run after confirming a session; never trust
  *     `user_metadata.admin` without a valid session first.
@@ -33,7 +33,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// AIDEV-NOTE: Original imported a shared client: `import { supabase } from '../../utils/supabase';`
+// Note: Original imported a shared client: `import { supabase } from '../../utils/supabase';`
 // Inlined + generalized here so this module is self-contained for the library.
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
@@ -54,7 +54,7 @@ export interface AuthClient {
 /** Session subset consumed by the guard. */
 export interface AuthSession {
   user?: {
-    // AIDEV-NOTE: `admin` lives in client-visible metadata; UX-gate only (see header).
+    // Note: `admin` lives in client-visible metadata; UX-gate only (see header).
     user_metadata?: { admin?: boolean } | null;
   } | null;
 }
@@ -62,7 +62,7 @@ export interface AuthSession {
 /**
  * Create a browser auth client from environment configuration.
  *
- * AIDEV-NOTE: Falls back to a harmless placeholder client when env vars are
+ * Note: Falls back to a harmless placeholder client when env vars are
  * absent so the app boots in environments where auth is not configured
  * (e.g. previews). The guard still fails closed — a placeholder client returns
  * no session, so users are redirected to login rather than granted access.
@@ -151,7 +151,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (isAuthorized === null) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {/* AIDEV-NOTE: Neutral Tailwind color (border-gray-900) so the component
+        {/* Note: Neutral Tailwind color (border-gray-900) so the component
             is theme-agnostic; swap for a project accent color in consuming apps. */}
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>

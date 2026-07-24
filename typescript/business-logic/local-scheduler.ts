@@ -26,7 +26,7 @@
  *   - calendar          optional external busy-time provider
  *   - getColorForEnergyType  optional color mapper (default provided inline)
  *
- * AIDEV-NOTE: Role = deterministic scheduling core. Two ordering/security
+ * Note: Role = deterministic scheduling core. Two ordering/security
  * constraints are load-bearing and MUST be preserved:
  *   1) Tasks are scheduled in strict priority order (asap>high>medium>low, then
  *      soonest deadline, then longest duration) so high-priority work claims the
@@ -273,7 +273,7 @@ interface ResolvedConfig {
 /** Fill config defaults. Timezone default comes from env, then "UTC". */
 function resolveConfig(config?: SchedulerConfig): ResolvedConfig {
   return {
-    // AIDEV-NOTE: was hardcoded "America/New_York"; generalized to env-driven,
+    // Note: was hardcoded "America/New_York"; generalized to env-driven,
     // neutral "UTC" fallback for a public/multi-tenant context.
     defaultTimezone: config?.defaultTimezone ?? process.env.SCHEDULER_DEFAULT_TIMEZONE ?? "UTC",
     defaultWorkStart: config?.defaultWorkStart ?? "09:00",
@@ -643,7 +643,7 @@ export async function rescheduleAllTasks(
       const block = await autoScheduleTaskInternal(deps, userId, task, isHabit ? { maxDays: 1 } : undefined);
       if (block) results.push(block);
     } catch (err) {
-      // AIDEV-NOTE: one task's failure must not abort the whole reschedule pass.
+      // Note: one task's failure must not abort the whole reschedule pass.
       console.error(`Reschedule failed for task ${task.id}:`, err);
     }
   }

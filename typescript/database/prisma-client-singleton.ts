@@ -20,7 +20,7 @@
  *   - @prisma/client (or a generated client) : the PrismaClient constructor.
  *   - @prisma/adapter-pg                      : node-postgres driver adapter.
  *
- * AIDEV-NOTE: Adapted and generalized from a production codebase.
+ * Note: Adapted and generalized from a production codebase.
  *   Ordering/security constraints:
  *   - DATABASE_URL is the ONLY source of DB credentials; keep it in env, never
  *     in source or logs. It is read at client-creation time.
@@ -34,7 +34,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-// AIDEV-NOTE: In the source repo the client was imported from a locally
+// Note: In the source repo the client was imported from a locally
 // generated path ("@/generated/prisma/client"). For a portable, self-contained
 // component we import from the published "@prisma/client" package instead.
 // If you use a custom generator output, swap the import above accordingly.
@@ -68,7 +68,7 @@ function createPrismaClient(): PrismaClient {
 
   const adapter = new PrismaPg({ connectionString });
 
-  // AIDEV-NOTE: `as any` bridges generated-client typings that may not declare
+  // Note: `as any` bridges generated-client typings that may not declare
   // the `adapter` constructor option yet. Prisma validates it at runtime.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new (PrismaClient as any)({ adapter }) as PrismaClient;

@@ -29,7 +29,7 @@ Input conventions:
     - Output Series preserve the input index; leading positions where a
       rolling window has insufficient data are NaN by design.
 
-AIDEV-NOTE: Role = shared, pure indicator kernel. It intentionally holds NO
+Note: Role = shared, pure indicator kernel. It intentionally holds NO
 state, NO I/O, and NO secrets so it is safe to publish and reuse. Ordering
 constraint: SuperTrend and ADX are path-dependent (each bar depends on the
 prior bar), so callers must pass rows in chronological order (oldest first);

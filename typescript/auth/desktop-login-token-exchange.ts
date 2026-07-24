@@ -31,7 +31,7 @@
  *     original imported an internal Prisma client:
  *       // import { prisma } from "@/lib/prisma";
  *
- * AIDEV-NOTE: Security-critical auth boundary. Ordering constraints are
+ * Note: Security-critical auth boundary. Ordering constraints are
  * load-bearing and MUST be preserved:
  *   1. Validate the code PATTERN before any DB lookup — rejects malformed /
  *      injection-shaped input and avoids a query on garbage. The pattern also
@@ -45,7 +45,7 @@
  * All failure paths collapse to `{ token: null }` — do not add distinguishing
  * error bodies/status codes that would let a caller enumerate valid codes.
  *
- * AIDEV-NOTE: This is a poll-based endpoint with no built-in rate limiting.
+ * Note: This is a poll-based endpoint with no built-in rate limiting.
  * Brute-force resistance rests entirely on the code's entropy (32–128 URL-safe
  * chars). If you expose it publicly, front it with a rate limiter / WAF at the
  * edge — do not lower the CODE_PATTERN entropy floor to compensate.
@@ -53,7 +53,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-// AIDEV-NOTE: Original imported an internal Prisma client. Replaced with an
+// Note: Original imported an internal Prisma client. Replaced with an
 // injectable port so this component is framework/ORM-agnostic and testable.
 // import { prisma } from "@/lib/prisma";
 
@@ -80,7 +80,7 @@ export interface SessionRecord {
  * Persistence port for the token exchange. Implement this with your ORM /
  * data layer (e.g. Prisma, Drizzle, a raw SQL adapter).
  *
- * AIDEV-NOTE: Kept intentionally narrow (only the two lookups the exchange
+ * Note: Kept intentionally narrow (only the two lookups the exchange
  * needs) so adapters stay trivial and no extra columns are exposed.
  */
 export interface DesktopLoginStore {
