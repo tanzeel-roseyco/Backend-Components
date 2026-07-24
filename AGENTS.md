@@ -2,8 +2,8 @@
 
 Follow `.planning/STANDARDS.md` for every implementation and review.
 
-This repository deliberately uses ordinary code comments. Do not add AIDEV,
-AI-authorship, signature, or session-tracking markers to source or documentation.
+This repository deliberately uses ordinary code comments. Do not add
+automation-specific anchors, signature comments, or session-tracking markers.
 Do not create `code-reviews.md`; review findings belong in GitHub issues or the
 current working session.
 
