@@ -11,7 +11,7 @@
     "test": "jest",
     "test:core": "rm -rf .test-dist && ./node_modules/.bin/tsc --strict --target ES2022 --module commonjs --moduleResolution node --outDir .test-dist utilities/spam-submission-guard.ts utilities/secret-redaction.ts auth/portable-auth-core.ts infrastructure/workflow-lease.ts infrastructure/ssrf-safe-downloader.ts infrastructure/ai-cost-guard.ts infrastructure/resumable-file-transfer.ts infrastructure/agent-action-spool.ts integrations/docusign-client.ts integrations/dotloop-client.ts integrations/gotenberg-client.ts integrations/google-workspace-rest.ts integrations/stripe-commerce.ts integrations/telegram-intake.ts integrations/twilio-voice.ts business-logic/abandoned-cart-recovery.ts business-logic/lead-sequence-engine.ts business-logic/quote-document-workflow.ts business-logic/signed-document-processor.ts && NODE_ENV=test node --test utilities/*.test.js auth/*.test.js infrastructure/*.test.js integrations/*.test.js business-logic/*.test.js",
     "test:watch": "jest --watch",
-    "lint": "eslint --config eslint.core.cjs $(tr '\\n' ' ' < core-files.txt)",
+    "lint": "eslint --config eslint.core.cjs $(tr -d '\\r' < core-files.txt | tr '\\n' ' ')",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
