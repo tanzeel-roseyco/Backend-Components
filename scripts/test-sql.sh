@@ -22,7 +22,10 @@ until docker exec "$container" pg_isready -U postgres >/dev/null 2>&1; do
   sleep 1
 done
 
-docker exec "$container" psql -v ON_ERROR_STOP=1 -U postgres -d postgres \
+# The Supabase image does not consistently grant its limited postgres role
+# permission to assume authenticated in CI. Its admin role owns role setup.
+docker exec -e PGPASSWORD=postgres "$container" \
+  psql -v ON_ERROR_STOP=1 -U supabase_admin -d postgres \
   -c "create extension if not exists pgtap" \
   -f /workspace/tenant-rls-reference.sql \
   -f /workspace/tenant-rls-reference.pgtap.sql \

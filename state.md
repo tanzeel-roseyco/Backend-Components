@@ -8,4 +8,5 @@ TypeScript package exports.
 
 Repository-wide Docker verification, GitHub automation, language packaging,
 adversarial review, and release validation are complete for the `v1.0.0`
-release boundary.
+release boundary. PostgreSQL verification runs as the Supabase image's
+administrative database role so pgTAP can exercise authenticated-role RLS.
