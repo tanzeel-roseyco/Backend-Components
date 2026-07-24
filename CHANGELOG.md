@@ -3,6 +3,12 @@
 All notable repository releases are documented here. Versions follow semantic
 versioning for the stable, production-ready component surface.
 
+## Unreleased
+
+- consolidated developer documentation into nine maintained Markdown files
+- replaced Markdown provenance notes with `provenance.json`
+- removed the registry requirement for one README per implementation
+
 ## 1.0.0
 
 - established a machine-readable component maturity registry

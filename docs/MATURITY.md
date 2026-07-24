@@ -1,15 +1,14 @@
 # Component maturity
 
 `components.json` is the source of truth. CI rejects missing files, duplicated
-classifications, implementations without adjacent READMEs, and unclassified
-components.
+classifications, unsafe paths, and unclassified components.
 
 ## Production-ready
 
-The component has a stable documented boundary, meaningful limits, explicit
-failure behavior, deterministic tests, and inclusion in the language's full
-Docker verification. It is suitable for adoption after the consumer implements
-the documented application-owned adapters and security configuration.
+The component is included in the language's full Docker verification and has
+deterministic tests for its repository-owned behavior. Consumers must still
+review its public types, tests, limits, external adapters, and security
+configuration against their application before adoption.
 
 ## Reference
 

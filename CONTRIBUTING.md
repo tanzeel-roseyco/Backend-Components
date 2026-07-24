@@ -3,11 +3,11 @@
 Changes should improve a component already needed by a real application. Avoid
 adding speculative abstractions or application-specific configuration.
 
-1. Read the component README and `docs/ARCHITECTURE.md`.
+1. Read the language README, component source, tests, and `docs/ARCHITECTURE.md`.
 2. Keep domain decisions separate from provider, framework, and persistence code.
 3. Validate external inputs before side effects.
 4. Add deterministic tests for the happy path and likely failures.
-5. Update the adjacent README and `components.json`.
+5. Update `components.json` and any affected language or architecture documentation.
 6. Run the repository's Docker checks.
 
 Production-ready components must have explicit limits, deliberate error

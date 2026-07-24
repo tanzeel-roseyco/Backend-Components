@@ -17,8 +17,6 @@ if (unique.size !== classified.length) {
 
 for (const path of unique) {
   if (!existsSync(join(root, path))) throw new Error(`components.json references a missing component: ${path}`);
-  const readme = path.replace(/\.(?:tsx?|js|py|go|sql)$/, ".README.md");
-  if (!existsSync(join(root, readme))) throw new Error(`component has no adjacent README: ${path}`);
 }
 
 const implementations = [];

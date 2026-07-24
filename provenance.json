@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "components": {
+    "shared/sql/tenant-rls-reference.sql": ["ElevateoCo/golden-path-starter/supabase/migrations/0001_example_tenant_isolation.sql", "ElevateoCo/golden-path-starter/supabase/tests/rls_tenant_isolation.sql"],
+    "typescript/auth/portable-auth-core.ts": ["TeamRoseyCo/brotherhood/apps/desktop/src/main/oauthLoopback.ts", "TeamRoseyCo/brotherhood/apps/desktop/src/main/pkce.ts", "TeamRoseyCo/brotherhood/apps/server/src/auth/googleVerifier.ts", "TeamRoseyCo/brotherhood/apps/server/src/auth/signIn.ts", "TeamRoseyCo/brotherhood/packages/db/schema.sql", "TeamRoseyCo/brotherhood/packages/db/src/users.ts", "TeamRoseyCo/brotherhood/packages/db/src/seedInvites.ts"],
+    "typescript/business-logic/abandoned-cart-recovery.ts": ["ElevateoCo/cat-core.com/apps/admin/app/api/abandoned-carts/route.ts", "ElevateoCo/cat-core.com/apps/admin/app/api/abandoned-carts/send-email/route.ts"],
+    "typescript/business-logic/lead-sequence-engine.ts": ["ElevateoCo/roseycorebuild/src/lib/leads/engine.ts", "ElevateoCo/roseycorebuild/src/lib/leads/sequences.ts", "ElevateoCo/roseycorebuild/src/lib/leads/rate-limit.ts", "ElevateoCo/roseycorebuild/src/lib/leads/store.ts", "ElevateoCo/roseycorebuild/src/app/api/cron/sequences/route.ts"],
+    "typescript/business-logic/quote-document-workflow.ts": ["ElevateoCo/Verbiest-Quote-Automation/src/lib/measurement/extract.ts", "ElevateoCo/Verbiest-Quote-Automation/src/lib/emails/sendQuoteEmail.ts", "ElevateoCo/Verbiest-Quote-Automation/src/lib/quotes/statusMachine.ts"],
+    "typescript/business-logic/signed-document-processor.ts": ["ElevateoCo/KCF.2/property-intake-app/lib/actions/process-signed-documents.ts", "ElevateoCo/KCF.2/property-intake-app/lib/docusign/client.ts"],
+    "typescript/infrastructure/agent-action-spool.ts": ["ElevateoCo/elevate-os/dashboard/src/lib/mc/actions.ts", "ElevateoCo/elevate-os/dashboard/src/lib/mc/ax42ActionPolicy.mjs", "ElevateoCo/elevate-os/dashboard/src/lib/workspaces.ts"],
+    "typescript/infrastructure/ai-cost-guard.ts": ["TeamRoseyCo/instagram-intelligence/lib/cost/withCostTag.ts", "TeamRoseyCo/instagram-intelligence/lib/cost/rates.ts"],
+    "typescript/infrastructure/resumable-file-transfer.ts": ["ElevateoCo/elevateo-intake/lib/server/supabase.ts", "ElevateoCo/elevateo-intake/lib/server/copy.ts", "ElevateoCo/elevateo-intake/app/api/cron/reconcile/route.ts"],
+    "typescript/infrastructure/ssrf-safe-downloader.ts": ["TeamRoseyCo/instagram-intelligence/services/analyze/download.ts"],
+    "typescript/infrastructure/workflow-lease.ts": ["TeamRoseyCo/instagram-intelligence"],
+    "typescript/integrations/docusign-client.ts": ["ElevateoCo/KCF.2/property-intake-app/lib/docusign/client.ts", "ElevateoCo/KCF.2/property-intake-app/lib/docusign/config.ts", "ElevateoCo/KCF.2/property-intake-app/lib/docusign/types.ts", "ElevateoCo/KCF.2/property-intake-app/lib/docusign/webhook-verify.ts", "ElevateoCo/KCF.2/property-intake-app/app/api/webhooks/docusign/route.ts", "ElevateoCo/KCF.2/property-intake-app/lib/docusign/seller-status.ts"],
+    "typescript/integrations/dotloop-client.ts": ["ElevateoCo/KCF.2/property-intake-app/lib/dotloop/client.ts", "ElevateoCo/KCF.2/property-intake-app/lib/dotloop/types.ts", "ElevateoCo/KCF.2/property-intake-app/lib/dotloop/index.ts"],
+    "typescript/integrations/google-workspace-rest.ts": ["ElevateoCo/elevateo-intake/lib/server/oauth-google.ts", "ElevateoCo/elevateo-intake/lib/server/drive.ts"],
+    "typescript/integrations/gotenberg-client.ts": ["ElevateoCo/KCF.2/property-intake-app/lib/pdf/gotenberg.ts"],
+    "typescript/integrations/stripe-commerce.ts": ["ElevateoCo/Puxx/app/api/stripe/webhook/route.ts", "ElevateoCo/Puxx/app/api/stripe/checkout/route.ts", "ElevateoCo/Puxx/lib/payments/stripe.ts", "ElevateoCo/TecTiles/src/app/api/create-checkout-session/route.ts", "ElevateoCo/TecTiles/src/app/api/webhook/route.ts"],
+    "typescript/integrations/telegram-intake.ts": ["TeamRoseyCo/proposal-bot/src/app/api/telegram/webhook/route.ts", "TeamRoseyCo/proposal-bot/src/bot/bot.ts", "TeamRoseyCo/proposal-bot/src/storage/types.ts", "TeamRoseyCo/proposal-bot/src/storage/index.ts"],
+    "typescript/integrations/twilio-voice.ts": ["ElevateoCo/Calls-Elevateo/src/app/api/twilio/conference/join/route.ts", "ElevateoCo/Calls-Elevateo/src/app/api/twilio/conference/events/route.ts"],
+    "typescript/utilities/secret-redaction.ts": ["ElevateoCo/elevate-os/dashboard/src/lib/mc/redact.ts"],
+    "typescript/utilities/spam-submission-guard.ts": ["ElevateoCo/roseycorebuild/src/lib/leads/spam.ts"]
+  }
+}

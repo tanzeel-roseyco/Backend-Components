@@ -1,8 +1,7 @@
 # Python backend components
 
 This directory is an installable Python 3.12 package containing nine reusable
-components. Each source module retains its adjacent component README with its
-specific contract, inputs, and operational constraints.
+components. Public types, source comments, and tests define their behavior.
 
 ## Layout
 
@@ -59,4 +58,4 @@ or require credentials.
 - Runtime and development dependencies are directly pinned.
 - All nine modules have deterministic automated coverage.
 - Live integrations remain caller-configured and are not exercised in tests.
-- Individual component READMEs remain the authoritative behavioral references.
+- Reference and experimental modules must be reviewed before production use.

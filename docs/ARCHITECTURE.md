@@ -50,18 +50,11 @@ Supabase, Prisma, and provider SDK release cycles.
 
 ## Component contract
 
-Every component has an adjacent README covering its local contract:
-
-- purpose
-- public inputs and outputs
-- dependencies and required adapters
-- side effects and persistence guarantees
-- validation, limits, and error behavior
-- tests and known limitations
-- adoption steps
-
-Maturity is deliberately centralized in `components.json` so a stale sidecar
-cannot contradict the release gate.
+Public types define each component's callable surface. Source comments and
+focused tests record verified behavior and operational constraints. Consumers
+must review those tests and implement application-owned adapters with the
+atomicity, uniqueness, and retry behavior their deployment requires. Maturity
+is centralized in `components.json`.
 
 Production-ready components are exported by their language package or module.
 Reference and experimental components remain available as source but are not
@@ -69,14 +62,16 @@ part of the stable TypeScript package surface.
 
 ## Stateful workflow conventions
 
-Durable workflows use application-supplied store interfaces. Where multiple
-workers can race, the interface requires atomic claims and fencing tokens.
-Where providers can replay requests or webhooks, the component uses durable
+Durable workflows use application-supplied store interfaces. Those interfaces
+require component-specific atomicity and idempotency and, where exposed,
+fencing semantics recorded in their public contracts and tests. Where
+providers can replay requests or webhooks, the component uses durable
 idempotency identities and validates that a replay still represents the same
 operation.
 
-An interface is not a database implementation. Consumers must implement its
-documented transaction and uniqueness guarantees in their chosen store.
+An interface is not a database implementation. Consumers must establish and
+test the transaction, uniqueness, fencing, and retry guarantees required by
+their chosen store.
 
 ## Provider integration conventions
 
@@ -88,7 +83,9 @@ Provider adapters:
 - preserve provider idempotency identifiers where supported
 - expose provider failures without leaking credentials or unbounded bodies
 
-Webhook components authenticate the exact raw bytes before parsing.
+Webhook components preserve the provider-specific signed representation before
+parsing or normalization. Depending on the provider, that may be raw bytes, a
+secret header, or the exact public URL and submitted form fields.
 
 ## Release boundary
 
