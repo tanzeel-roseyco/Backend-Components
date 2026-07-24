@@ -12,3 +12,5 @@ release boundary. PostgreSQL verification runs as the Supabase image's
 administrative database role so pgTAP can exercise authenticated-role RLS.
 Python development and runtime minimums include GitHub's patched releases for
 the repository's disclosed `requests` and `pytest` advisories.
+GitHub workflows pin the current Node 24 action majors to immutable commit
+SHAs, including CodeQL v4.
