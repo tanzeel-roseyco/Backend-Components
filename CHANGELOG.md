@@ -8,6 +8,7 @@ versioning for the stable, production-ready component surface.
 - consolidated developer documentation into nine maintained Markdown files
 - replaced Markdown provenance notes with `provenance.json`
 - removed the registry requirement for one README per implementation
+- documented component grades and explicit package/export strategy
 
 ## 1.0.0
 

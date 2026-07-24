@@ -43,7 +43,9 @@ const { DocuSign, WorkflowLease } = require("@backend-components/typescript");
 ```
 
 Production components can also be imported through documented subpaths. The
-package tarball contains package metadata, the compiled production-ready
+package uses explicit subpath exports for production-ready components only;
+reference and experimental files are not exported as supported package APIs.
+The package tarball contains package metadata, the compiled production-ready
 surface, declarations, this README, and the license.
 
 ## Critical integration constraints

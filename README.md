@@ -37,6 +37,11 @@ implementation as `production-ready`, `reference`, or `experimental`.
 [docs/MATURITY.md](docs/MATURITY.md) defines those terms. A directory name or
 source-file comment does not override the registry.
 
+The same document defines the public grading system: Grade A for stable,
+verified package or module surfaces; Grade B for tested reference components;
+Grade C for source-only reference components; and Grade D for experimental
+work.
+
 [provenance.json](provenance.json) records the source paths used to standardize
 borrowed components where path-level provenance is known.
 

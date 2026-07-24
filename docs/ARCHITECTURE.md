@@ -94,3 +94,22 @@ repository release also includes reference and experimental source, clearly
 classified in `components.json`. Git tags and GitHub releases identify tested
 repository snapshots; component maturity may only be promoted through a
 verified change.
+
+## Package and export strategy
+
+The TypeScript package is the stable package surface. It currently targets
+Node.js 20 or newer and publishes CommonJS `require` entry points only. The
+root export exposes production-ready components as namespaces, and subpath
+exports are explicit for each production-ready component. Wildcard exports are
+not used because reference and experimental files must not appear as supported
+package APIs.
+
+The Go directory is a nested module for source reuse through a checked-out copy,
+workspace, or `replace` directive until a stable module path and `go/v*` tag
+exist. The Python directory is source plus tests; its registry entries remain
+reference or experimental unless promoted through the same verification process
+used by the stable surface.
+
+Public releases should treat `components.json` as the contract for what is
+stable, reference-only, or experimental. Package metadata should expose only
+Grade A components unless a later release adds a separate preview channel.

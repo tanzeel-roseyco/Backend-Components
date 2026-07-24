@@ -13,21 +13,77 @@
       "types": "./dist/auth/portable-auth-core.d.ts",
       "require": "./dist/auth/portable-auth-core.js"
     },
-    "./business-logic/*": {
-      "types": "./dist/business-logic/*.d.ts",
-      "require": "./dist/business-logic/*.js"
+    "./business-logic/abandoned-cart-recovery": {
+      "types": "./dist/business-logic/abandoned-cart-recovery.d.ts",
+      "require": "./dist/business-logic/abandoned-cart-recovery.js"
     },
-    "./infrastructure/*": {
-      "types": "./dist/infrastructure/*.d.ts",
-      "require": "./dist/infrastructure/*.js"
+    "./business-logic/lead-sequence-engine": {
+      "types": "./dist/business-logic/lead-sequence-engine.d.ts",
+      "require": "./dist/business-logic/lead-sequence-engine.js"
     },
-    "./integrations/*": {
-      "types": "./dist/integrations/*.d.ts",
-      "require": "./dist/integrations/*.js"
+    "./business-logic/quote-document-workflow": {
+      "types": "./dist/business-logic/quote-document-workflow.d.ts",
+      "require": "./dist/business-logic/quote-document-workflow.js"
     },
-    "./utilities/*": {
-      "types": "./dist/utilities/*.d.ts",
-      "require": "./dist/utilities/*.js"
+    "./business-logic/signed-document-processor": {
+      "types": "./dist/business-logic/signed-document-processor.d.ts",
+      "require": "./dist/business-logic/signed-document-processor.js"
+    },
+    "./infrastructure/agent-action-spool": {
+      "types": "./dist/infrastructure/agent-action-spool.d.ts",
+      "require": "./dist/infrastructure/agent-action-spool.js"
+    },
+    "./infrastructure/ai-cost-guard": {
+      "types": "./dist/infrastructure/ai-cost-guard.d.ts",
+      "require": "./dist/infrastructure/ai-cost-guard.js"
+    },
+    "./infrastructure/resumable-file-transfer": {
+      "types": "./dist/infrastructure/resumable-file-transfer.d.ts",
+      "require": "./dist/infrastructure/resumable-file-transfer.js"
+    },
+    "./infrastructure/ssrf-safe-downloader": {
+      "types": "./dist/infrastructure/ssrf-safe-downloader.d.ts",
+      "require": "./dist/infrastructure/ssrf-safe-downloader.js"
+    },
+    "./infrastructure/workflow-lease": {
+      "types": "./dist/infrastructure/workflow-lease.d.ts",
+      "require": "./dist/infrastructure/workflow-lease.js"
+    },
+    "./integrations/docusign-client": {
+      "types": "./dist/integrations/docusign-client.d.ts",
+      "require": "./dist/integrations/docusign-client.js"
+    },
+    "./integrations/dotloop-client": {
+      "types": "./dist/integrations/dotloop-client.d.ts",
+      "require": "./dist/integrations/dotloop-client.js"
+    },
+    "./integrations/google-workspace-rest": {
+      "types": "./dist/integrations/google-workspace-rest.d.ts",
+      "require": "./dist/integrations/google-workspace-rest.js"
+    },
+    "./integrations/gotenberg-client": {
+      "types": "./dist/integrations/gotenberg-client.d.ts",
+      "require": "./dist/integrations/gotenberg-client.js"
+    },
+    "./integrations/stripe-commerce": {
+      "types": "./dist/integrations/stripe-commerce.d.ts",
+      "require": "./dist/integrations/stripe-commerce.js"
+    },
+    "./integrations/telegram-intake": {
+      "types": "./dist/integrations/telegram-intake.d.ts",
+      "require": "./dist/integrations/telegram-intake.js"
+    },
+    "./integrations/twilio-voice": {
+      "types": "./dist/integrations/twilio-voice.d.ts",
+      "require": "./dist/integrations/twilio-voice.js"
+    },
+    "./utilities/secret-redaction": {
+      "types": "./dist/utilities/secret-redaction.d.ts",
+      "require": "./dist/utilities/secret-redaction.js"
+    },
+    "./utilities/spam-submission-guard": {
+      "types": "./dist/utilities/spam-submission-guard.d.ts",
+      "require": "./dist/utilities/spam-submission-guard.js"
     }
   },
   "files": [
