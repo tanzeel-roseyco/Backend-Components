@@ -1,9 +1,18 @@
-# Environment variables
+# ==========================================================================
+# Environment & secrets  (NEVER commit real values)
+# ==========================================================================
 .env
 .env.local
 .env.*.local
+*.pem
+*.key
+*.crt
+service-account-key.json
+credentials.json
 
+# ==========================================================================
 # Dependencies
+# ==========================================================================
 node_modules/
 __pycache__/
 *.pyc
@@ -13,38 +22,36 @@ venv/
 env/
 vendor/
 
-# Build outputs
+# ==========================================================================
+# Build outputs  (compiled artifacts only — NOT source)
+# Source .ts/.js/.py/.go files are the product of this repo and ARE tracked.
+# ==========================================================================
 dist/
 build/
-*.js
-!*.config.js
-*.ts
-!*.d.ts
+out/
+*.tsbuildinfo
 
-# IDEs
+# ==========================================================================
+# IDEs & OS
+# ==========================================================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
+Thumbs.db
 
+# ==========================================================================
 # Testing
+# ==========================================================================
 coverage/
 .nyc_output/
+.pytest_cache/
 
+# ==========================================================================
 # Logs
+# ==========================================================================
 logs/
 *.log
 npm-debug.log*
-
-# OS
-Thumbs.db
-.DS_Store
-
-# Sensitive files
-*.pem
-*.key
-*.crt
-service-account-key.json
-credentials.json

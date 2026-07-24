@@ -4,6 +4,57 @@ A comprehensive, production-ready monorepo of reusable backend components extrac
 
 **Status:** ✅ Production Ready | 🔐 Secure by default | 📦 Multi-language support
 
+> **Current state (v1.1.0):** 42 component files shipped across TypeScript/Node (33),
+> Python (9), and Go (1). 31 of these were **borrowed from real production codebases**
+> (`autoscheduler`, a market-scanner, and a client web project), then generalized —
+> every secret replaced with an env var, all client/personal identity scrubbed,
+> hardcoded config parameterized — and adversarially reviewed. The repo is verified
+> free of secrets and PII. See the [Borrowed Components Manifest](#-borrowed-components-manifest).
+
+---
+
+## 📦 Borrowed Components Manifest
+
+These were lifted from real production code and standardized for public reuse.
+Origins are described neutrally; no client/person is named in the code.
+
+### From an AI scheduling app (TypeScript)
+- `typescript/auth/google-oauth-token-manager.ts` — OAuth2 token manager w/ proactive refresh
+- `typescript/auth/nextauth-prisma-adapter.ts` — Custom NextAuth adapter (env-gated email linking)
+- `typescript/auth/desktop-login-token-exchange.ts` — Desktop/Electron code→session exchange
+- `typescript/database/prisma-client-singleton.ts` — Serverless-safe Prisma singleton
+- `typescript/integrations/multi-provider-llm.ts` — Groq/Gemini/OpenAI fallback chain
+- `typescript/integrations/google-calendar.ts` — Calendar events + availability
+- `typescript/integrations/google-gmail.ts` — Gmail list/filter + header extraction
+- `typescript/business-logic/task-scheduler.ts` — Greedy energy-aware scheduler
+- `typescript/business-logic/local-scheduler.ts` — Offline fallback scheduler
+- `typescript/utilities/time-color-utils.ts` — Time/color/date helpers
+- `typescript/utilities/hijri-calendar.ts` — Gregorian ↔ Hijri conversion
+
+### From a market-scanner (Python)
+- `python/integrations/exchange_hmac_auth.py` — HMAC-SHA256 signed-request auth
+- `python/utilities/resilient_http_client.py` — Retry + backoff + circuit breaker
+- `python/business-logic/technical_indicators.py` — RSI/ATR/MACD/ADX/OBV/SuperTrend/CMF/BB/Keltner
+- `python/business-logic/signal_library.py` — Standardized `SignalResult` signals
+- `python/business-logic/trade_journal.py` — Trade logger + analytics (CSV-injection safe)
+- `python/database/unified_data_layer.py` — Cached multi-source OHLCV fetcher
+
+### From a client web project (Node/TS) — client identity fully scrubbed
+- `typescript/business-logic/calendly-webhook-handler.js` — Booking webhook + suppression
+- `typescript/business-logic/newsletter-subscription-handler.js` — Dual-platform subscribe
+- `typescript/business-logic/quiz-assessment-handler.js` — Tiered quiz + assessment email
+- `typescript/business-logic/review-request-campaign.js` — Post-booking review workflow
+- `typescript/business-logic/blog-post-notification.js` — Publish broadcast email
+- `typescript/business-logic/blog-audit-system.js` — Draft list + publish (field whitelist)
+- `typescript/business-logic/poll-handler.js` — Survey collector
+- `typescript/utilities/download-analytics-tracker.js` — Download analytics
+- `typescript/utilities/seo-ranking-tracker.js` — Scheduled GSC pull + batch upsert
+- `typescript/integrations/google-search-console-client.ts` — Type-safe GSC client
+- `typescript/auth/protected-route.tsx` — React admin route guard
+- `typescript/utilities/seo-utils.ts` — Canonicalization + URL normalization
+- `typescript/utilities/sitemap-generator.ts` — Build-time XML sitemap
+- `typescript/utilities/serverless-helpers.js` — escapeHtml + IP/UA extraction + handler shape
+
 ---
 
 ## 📋 What's Inside
