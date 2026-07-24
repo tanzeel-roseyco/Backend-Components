@@ -22,7 +22,7 @@ dev = [
   "pytest==9.0.3",
   "pytest-asyncio==1.4.0",
   "ruff==0.12.7",
-  "types-requests==2.32.4.20250611",
+  "types-requests==2.33.0.20260712",
 ]
 
 [tool.hatch.build.targets.wheel]
