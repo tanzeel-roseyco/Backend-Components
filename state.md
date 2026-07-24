@@ -16,3 +16,5 @@ Python development and runtime minimums include GitHub's patched releases for
 the repository's disclosed `requests` and `pytest` advisories.
 GitHub workflows pin the current Node 24 action majors to immutable commit
 SHAs, including CodeQL v4.
+Dependabot security updates remain enabled, while scheduled version-update
+pull requests are disabled to preserve the repository's main-only policy.
