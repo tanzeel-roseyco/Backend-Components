@@ -10,6 +10,8 @@ Repository-wide Docker verification, GitHub automation, language packaging,
 adversarial review, and release validation are complete for the `v1.0.0`
 release boundary. PostgreSQL verification runs as the Supabase image's
 administrative database role so pgTAP can exercise authenticated-role RLS.
+The harness waits for the Supabase image's bootstrap server to finish before
+testing, avoiding connections to its temporary initialization database.
 Python development and runtime minimums include GitHub's patched releases for
 the repository's disclosed `requests` and `pytest` advisories.
 GitHub workflows pin the current Node 24 action majors to immutable commit

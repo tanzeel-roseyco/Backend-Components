@@ -13,6 +13,18 @@ docker run --name "$container" -d \
   supabase/postgres:15.8.1.085 >/dev/null
 
 attempt=0
+# pg_isready succeeds during the image's temporary bootstrap server. Wait for
+# initialization to finish before accepting its final readiness signal.
+until docker logs "$container" 2>&1 | grep -q "PostgreSQL init process complete"; do
+  attempt=$((attempt + 1))
+  if [ "$attempt" -ge 60 ]; then
+    docker logs "$container"
+    exit 1
+  fi
+  sleep 1
+done
+
+attempt=0
 until docker exec "$container" pg_isready -U postgres >/dev/null 2>&1; do
   attempt=$((attempt + 1))
   if [ "$attempt" -ge 30 ]; then
