@@ -1,8 +1,9 @@
 # Backend Components Library
 
-> **Current implementation batch:** standardised public-form spam assessment,
-> diagnostic secret redaction, and storage-agnostic workflow leases are being added
-> from the consolidated ElevateoCo and TeamRoseyCo reuse inventory. See
+> **Current implementation batch:** 20 reviewed capabilities have been
+> standardised from the consolidated ElevateoCo and TeamRoseyCo reuse inventory,
+> including DocuSign, Dotloop, Twilio, Google Workspace, Stripe, agent workflows,
+> portable auth, document processing, file reconciliation, and tenant RLS. See
 > [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md) for source provenance and
 > verification state.
 
@@ -10,8 +11,9 @@ A comprehensive, production-ready monorepo of reusable backend components extrac
 
 **Status:** ✅ Production Ready | 🔐 Secure by default | 📦 Multi-language support
 
-> **Current state (v1.1.0):** 46 component files shipped across TypeScript/Node (36),
-> Python (9), and Go (1). 31 of these were **borrowed from real production codebases**
+> **Current state:** 52 production implementation artifacts across TypeScript/Node
+> (41), Python (9), Go (1), and reusable SQL (1). 51 were
+> **borrowed from real production codebases**
 > (`autoscheduler`, a market-scanner, and a client web project), then generalized —
 > every secret replaced with an env var, all client/personal identity scrubbed,
 > hardcoded config parameterized — and adversarially reviewed. The repo is verified
@@ -65,14 +67,14 @@ Origins are described neutrally; no client/person is named in the code.
 
 ## 📋 What's Inside
 
-**57 standardized backend components** organized across:
+**52 production implementation artifacts** organized across:
 
-- **Authentication & Authorization** (5 components) — Rate limiting, cookie auth, OAuth2, token management
-- **Database Layer** (5 components) — Supabase factory, Prisma singleton, batch inserts, migrations
-- **API Middleware & Integrations** (12 components) — Lead capture, webhooks, email, Google APIs, crypto exchanges
-- **Business Logic** (16 components) — Contact forms, subscriptions, quizzes, scheduling, trading signals
-- **Utilities & Helpers** (14 components) — HMAC tokens, config, email templates, SEO, tracking
-- **Infrastructure** (5 components) — CI/CD, configuration, environment setup, REST APIs
+- **Authentication & Authorization** — Rate limiting, cookie auth, OAuth2, token management
+- **Database Layer** — Supabase factory, Prisma singleton, batch inserts, migrations
+- **API Middleware & Integrations** — Lead capture, webhooks, email, Google APIs, crypto exchanges
+- **Business Logic** — Contact forms, subscriptions, quizzes, scheduling, trading signals
+- **Utilities & Helpers** — HMAC tokens, config, email templates, SEO, tracking
+- **Infrastructure** — CI/CD, configuration, environment setup, REST APIs
 
 ---
 
@@ -325,12 +327,12 @@ Comprehensive guides and references:
 ## 📊 Component Distribution
 
 ```
-Authentication & Authorization ████ (5 components)
-Database Layer ████ (5 components)
-API Middleware & Integrations ████████████ (12 components)
-Business Logic ████████████████ (16 components)
-Utilities & Helpers ██████████████ (14 components)
-Infrastructure ████ (5 components)
+Authentication & Authorization ████
+Database Layer ████
+API Middleware & Integrations ████████████
+Business Logic ████████████████
+Utilities & Helpers ██████████████
+Infrastructure ████
 ```
 
 ---
