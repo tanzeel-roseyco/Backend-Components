@@ -70,15 +70,6 @@
   ],
   "author": "TeamRoseyCo",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tanzeel-roseyco/Backend-Components.git",
-    "directory": "typescript"
-  },
-  "bugs": {
-    "url": "https://github.com/tanzeel-roseyco/Backend-Components/issues"
-  },
-  "homepage": "https://github.com/tanzeel-roseyco/Backend-Components#readme",
   "publishConfig": {
     "access": "public",
     "provenance": true

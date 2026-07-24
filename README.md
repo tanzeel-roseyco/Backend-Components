@@ -1,7 +1,5 @@
 # Backend Components
 
-[![CI](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/ci.yml/badge.svg)](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/codeql.yml/badge.svg)](https://github.com/tanzeel-roseyco/Backend-Components/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 This repository is a working library of backend and server-side components for

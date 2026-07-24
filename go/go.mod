@@ -1,3 +1,3 @@
-module github.com/tanzeel-roseyco/Backend-Components/go
+module backend-components/go
 
 go 1.24

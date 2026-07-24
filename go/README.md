@@ -15,7 +15,7 @@ use a checked-out copy through a workspace or a `replace` directive. Import the
 component as:
 
 ```go
-import "github.com/tanzeel-roseyco/Backend-Components/go/auth"
+import "backend-components/go/auth"
 ```
 
 ## Verify
